@@ -5,7 +5,7 @@ import Register from "./components/Register";
 import Layout from "./components/Layout";
 import Posts from "./components/Posts";
 import Post from "./components/Post";
-import ChatGpt from "./components/ChatGpt";
+import Chat from "./components/Chat";
 import CreateArticle from "./components/CreateArticle";
 import { CookiesProvider } from "react-cookie";
 import { useState } from "react";
@@ -29,7 +29,7 @@ const App = () => {
               <Route path={"/posts"} element={<Posts />} />
               <Route path={"posts/:postId"} element={<Post />} />
               <Route path={"createarticle"} element={<CreateArticle />} />
-              <Route path={"chatgpt"} element={<ChatGpt />} />
+              <Route path={"chat"} element={<Chat />} />
             </Route>
           </Routes>
         </BrowserRouter>
