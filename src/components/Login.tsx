@@ -16,16 +16,22 @@ import IconButton from "@mui/material/IconButton";
 import SendIcon from "@mui/icons-material/Send";
 import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+
 import {
   signInWithEmailAndPassword,
   onAuthStateChanged,
   User,
   signInWithPopup,
   sendPasswordResetEmail,
+  SignInMethod,
 } from "firebase/auth";
 import { auth, provider } from "../FirebaseConfig";
+import { useAuthState } from "react-firebase-hooks/auth";
+
 import { Navigate, Link as ReactLink } from "react-router-dom";
 import ReactModal from "react-modal";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { async } from "@firebase/util";
 
 function Copyright(props: any) {
   return (
@@ -74,11 +80,12 @@ const Login = () => {
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   // const [user, setuser] = useState<User | string | null | undefined>();
-  const [user, setuser] = useState<any>();
+  // const [user, setuser] = useState<any>();
   const [openModal, setOpenModal] = React.useState(false);
   const [resetEmail, setResetEmail] = useState("");
   const handleOpen = () => setOpenModal(true);
   const handleClose = () => setOpenModal(false);
+  const [user, loading, error] = useAuthState(auth);
 
   // パスワードリセットメール送信
   const sendResetEmail = async (e: React.MouseEvent<HTMLElement>) => {
@@ -94,33 +101,20 @@ const Login = () => {
       });
   };
 
+  // ログイン
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    try {
-      console.log(loginEmail);
-      console.log(loginPassword);
-      await signInWithEmailAndPassword(auth, loginEmail, loginPassword).then(
-        (_userCredential) => {
-          console.log(_userCredential);
-        }
-      );
-    } catch (error) {
-      console.log(error);
-      alert("メールアドレスまたはパスワードが間違っています。");
-    }
+    await signInWithEmailAndPassword(auth, loginEmail, loginPassword).catch(
+      (error) => alert(error.message)
+    );
   };
 
+  // signin with google
   const signInGoogle = async () => {
     await signInWithPopup(auth, provider).catch((error) =>
       alert(error.message)
     );
   };
-
-  useEffect(() => {
-    onAuthStateChanged(auth, (currentUser) => {
-      setuser(currentUser);
-    });
-  });
 
   return (
     <>
@@ -200,7 +194,8 @@ const Login = () => {
                     </Grid>
 
                     <Grid item xs>
-                      新規登録は<ReactLink to={"/register/"}>こちら</ReactLink>
+                      新規登録は
+                      <ReactLink to={"/register/"}>こちら</ReactLink>
                     </Grid>
                   </Grid>
 

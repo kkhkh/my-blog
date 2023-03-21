@@ -1,8 +1,6 @@
-import { useState, useEffect } from "react";
-import { onAuthStateChanged, signOut, User } from "firebase/auth";
-import { auth } from "../FirebaseConfig";
-import { useNavigate, Navigate, Link, NavLink } from "react-router-dom";
+import * as React from "react";
 import { styled, alpha } from "@mui/material/styles";
+import { NavLink } from "react-router-dom";
 import InputBase from "@mui/material/InputBase";
 import AppBar from "@mui/material/AppBar";
 import Button from "@mui/material/Button";
@@ -17,12 +15,11 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
+import Link from "@mui/material/Link";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import SettingsAccessibilityIcon from "@mui/icons-material/SettingsAccessibility";
 import SearchIcon from "@mui/icons-material/Search";
-import ButtonBase from "@mui/material/ButtonBase";
-import Paper from "@mui/material/Paper";
 
 function Copyright() {
   return (
@@ -83,46 +80,26 @@ const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 const theme = createTheme();
 
-const Home = () => {
-  const [user, setUser] = useState<User | null>();
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      setLoading(false);
-    });
-  }, []);
-
-  const navigate = useNavigate();
-
-  const logout = async () => {
-    await signOut(auth);
-    navigate("/login");
-  };
-
+export default function Album() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
+      {/* <AppBar position="relative"> */}
       <Box sx={{ flexGrow: 1 }}>
-        <AppBar>
-          <Container maxWidth="md">
-            <Toolbar>
-              <SettingsAccessibilityIcon sx={{ mr: 2 }} />
-              My Blog
-              <ButtonBase sx={{ ml: "auto" }}>
-                <Search>
-                  <SearchIconWrapper>
-                    <SearchIcon />
-                  </SearchIconWrapper>
-                  <StyledInputBase
-                    placeholder="Search…"
-                    inputProps={{ "aria-label": "search" }}
-                  />
-                </Search>
-              </ButtonBase>
-            </Toolbar>
-          </Container>
+        <AppBar position="static">
+          <Toolbar>
+            <SettingsAccessibilityIcon sx={{ mr: 2 }} />
+            <Typography variant="h6" color="inherit" noWrap></Typography>
+            <Search>
+              <SearchIconWrapper>
+                <SearchIcon />
+              </SearchIconWrapper>
+              <StyledInputBase
+                placeholder="Search…"
+                inputProps={{ "aria-label": "search" }}
+              />
+            </Search>
+          </Toolbar>
         </AppBar>
       </Box>
       <ButtonGroup variant="text" aria-label="text button group">
@@ -135,9 +112,6 @@ const Home = () => {
         <Button>
           <NavLink to="/posts">記事一覧</NavLink>
         </Button>
-        <Button>
-          <NavLink to={"/createarticle/"}>投稿</NavLink>
-        </Button>
       </ButtonGroup>
       <main>
         {/* Hero unit */}
@@ -148,46 +122,82 @@ const Home = () => {
             pb: 6,
           }}
         >
-          <Container maxWidth="md">
-            <Typography
-              component="h1"
-              variant="h5"
-              align="center"
-              color="text.primary"
-              gutterBottom
-            >
-              My blog
-            </Typography>
-
+          <Container maxWidth="fixed">
             <Typography
               variant="h5"
               align="center"
               color="text.secondary"
               paragraph
             >
-              {user?.email}
+              aa
             </Typography>
-            <Typography
-              variant="h5"
-              align="center"
-              color="text.secondary"
-              paragraph
-            >
-              <Button onClick={logout}>ログアウト</Button>
-            </Typography>
-
             <Stack
               sx={{ pt: 4 }}
               direction="row"
               spacing={2}
               justifyContent="center"
-            ></Stack>
+            >
+              <Button variant="contained">Main call to action</Button>
+              <Button variant="outlined">Secondary action</Button>
+            </Stack>
           </Container>
         </Box>
-        <Container sx={{ py: 8 }} maxWidth="md"></Container>
+        <Container sx={{ py: 8 }} maxWidth="md">
+          {/* End hero unit */}
+          <Grid container spacing={4}>
+            {cards.map((card) => (
+              <Grid item key={card} xs={12} sm={6} md={4}>
+                <Card
+                  sx={{
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  <CardMedia
+                    component="img"
+                    sx={{
+                      // 16:9
+                      pt: "56.25%",
+                    }}
+                    image="https://source.unsplash.com/random"
+                    alt="random"
+                  />
+                  <CardContent sx={{ flexGrow: 1 }}>
+                    <Typography gutterBottom variant="h5" component="h2">
+                      Heading
+                    </Typography>
+                    <Typography>
+                      This is a media card. You can use this section to describe
+                      the content.
+                    </Typography>
+                  </CardContent>
+                  <CardActions>
+                    <Button size="small">View</Button>
+                    <Button size="small">Edit</Button>
+                  </CardActions>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
       </main>
+      {/* Footer */}
+      <Box sx={{ bgcolor: "background.paper", p: 6 }} component="footer">
+        <Typography variant="h6" align="center" gutterBottom>
+          Footer
+        </Typography>
+        <Typography
+          variant="subtitle1"
+          align="center"
+          color="text.secondary"
+          component="p"
+        >
+          Something here to give the footer a purpose!
+        </Typography>
+        <Copyright />
+      </Box>
+      {/* End footer */}
     </ThemeProvider>
   );
-};
-
-export default Home;
+}

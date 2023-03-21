@@ -14,6 +14,15 @@ type article = {
   updatedAt: string;
 };
 
+type user = {
+  createdAt: string;
+  role: number;
+  name: string;
+  id: number;
+  email: string;
+  updatedAt: string;
+};
+
 // type data = {
 //   articles: article[];
 // };
@@ -22,10 +31,10 @@ type article = {
 //   data: data;
 // };
 
-const Posts = () => {
+const Users = () => {
   const [user, setUser] = useState<User | null>();
   const [loading, setLoading] = useState(true);
-  const [articles, setArticles] = useState<article[]>([]);
+  const [users, setUsers] = useState<user[]>([]);
   const [cookies, setCookie] = useCookies(["token"]);
 
   useEffect(() => {
@@ -39,20 +48,22 @@ const Posts = () => {
 
     // 記事一覧取得
     axios
-      .get<article[]>("https://api-blog-dev.lightsail.ijcloud.jp/articles", {
+      .get<article[]>("https://api-blog-dev.lightsail.ijcloud.jp/admin/users", {
         headers: {
           Authorization: "Bearer " + cookies["token"],
           accept: "application/json",
         },
       })
       .then((response: any) => {
-        const articleList = response.data.articles.map((item: any) => ({
+        const userList = response.data.users.map((item: any) => ({
           id: item.id,
-          content: item.content,
+          name: item.name,
         }));
         console.log("response:");
         console.log(response);
-        setArticles(articleList);
+        setUsers(userList);
+        console.log(userList);
+        console.log(users);
       })
       .catch((error) => {
         console.log(error);
@@ -71,10 +82,10 @@ const Posts = () => {
           ) : (
             <>
               <p>
-                {articles.map((article) => {
+                {users.map((user) => {
                   return (
-                    <li key={article.id}>
-                      <Link to={"/posts/" + article.id}>{article.content}</Link>
+                    <li key={user.id}>
+                      <Link to={"/posts/" + user.id}>{user.name}</Link>
                     </li>
                   );
                 })}
@@ -87,4 +98,4 @@ const Posts = () => {
   );
 };
 
-export default Posts;
+export default Users;
