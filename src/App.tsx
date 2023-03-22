@@ -18,6 +18,7 @@ import {
   QueryClientProvider,
   useQuery,
 } from "@tanstack/react-query";
+import { AuthProvider } from "./context/AuthContext";
 
 const App = () => {
   const [message, setMessage] = useState("");
@@ -29,26 +30,28 @@ const App = () => {
 
   return (
     // <div className="container">
-    <QueryClientProvider client={queryClient}>
-      <CookiesProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path={"test"} element={<Test />} />
-            <Route path={"album"} element={<Album />} />
-            <Route path={"/register/"} element={<Register />} />
-            <Route path={"/login/"} element={<Login />} />
-            {/* <Route path="/" element={<Layout />}> */}
-            <Route index element={<Home />} />
-            <Route path={"/users/"} element={<Users />} />
-            <Route path={"/posts"} element={<Posts />} />
-            <Route path={"posts/:postId"} element={<Post />} />
-            <Route path={"createarticle"} element={<CreateArticle />} />
-            <Route path={"chat"} element={<Chat />} />
-            {/* </Route> */}
-          </Routes>
-        </BrowserRouter>
-      </CookiesProvider>
-    </QueryClientProvider>
+    // <AuthProvider>
+    // {/* <QueryClientProvider client={queryClient}> */}
+    <CookiesProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path={"test"} element={<Test />} />
+          <Route path={"album"} element={<Album />} />
+          <Route path={"/register/"} element={<Register />} />
+          <Route path={"/login/"} element={<Login />} />
+          {/* <Route path="/" element={<Layout />}> */}
+          <Route index element={<Home />} />
+          <Route path={"/users/"} element={<Users />} />
+          <Route path={"/posts"} element={<Posts />} />
+          <Route path={"posts/:postId"} element={<Post />} />
+          <Route path={"createarticle"} element={<CreateArticle />} />
+          <Route path={"chat"} element={<Chat />} />
+          {/* </Route> */}
+        </Routes>
+      </BrowserRouter>
+    </CookiesProvider>
+    // {/* </QueryClientProvider> */}
+    // </AuthProvider>
     // </div>
   );
 };

@@ -24,18 +24,18 @@ import SearchIcon from "@mui/icons-material/Search";
 import ButtonBase from "@mui/material/ButtonBase";
 import Paper from "@mui/material/Paper";
 
-function Copyright() {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center">
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
+// function Copyright() {
+//   return (
+//     <Typography variant="body2" color="text.secondary" align="center">
+//       {"Copyright © "}
+//       <Link color="inherit" href="https://mui.com/">
+//         Your Website
+//       </Link>{" "}
+//       {new Date().getFullYear()}
+//       {"."}
+//     </Typography>
+//   );
+// }
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -84,15 +84,15 @@ const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 const theme = createTheme();
 
 const Home = () => {
-  const [user, setUser] = useState<User | null>();
+  // const [user, setUser] = useState<User | null>();
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      setLoading(false);
-    });
-  }, []);
+  // useEffect(() => {
+  //   onAuthStateChanged(auth, (currentUser) => {
+  //     setUser(currentUser);
+  //     setLoading(false);
+  //   });
+  // }, []);
 
   const navigate = useNavigate();
 
@@ -165,7 +165,7 @@ const Home = () => {
               color="text.secondary"
               paragraph
             >
-              {user?.email}
+              {/* {user?.email} */}
             </Typography>
             <Typography
               variant="h5"

@@ -1,46 +1,41 @@
 import React, { useState, useEffect } from "react";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import CameraIcon from "@mui/icons-material/Camera";
-import Modal from "@mui/material/Modal";
-import IconButton from "@mui/material/IconButton";
-import SendIcon from "@mui/icons-material/Send";
-import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import Avatar from "@material-ui/core/Avatar";
+import Button from "@material-ui/core/Button";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import TextField from "@material-ui/core/TextField";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Checkbox from "@material-ui/core/Checkbox";
+import Link from "@material-ui/core/Link";
+import Grid from "@material-ui/core/Grid";
+import Box from "@material-ui/core/Box";
+import Typography from "@material-ui/core/Typography";
+import Container from "@material-ui/core/Container";
+import CameraIcon from "@material-ui/icons/Camera";
+import IconButton from "@material-ui/core/IconButton";
+import SendIcon from "@material-ui/icons/Send";
+import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+import { makeStyles } from "@material-ui/core/styles";
+import CloseIcon from "@mui/icons-material/Close";
+import { useQuery } from "react-query";
+import { useAuthContext } from "../context/AuthContext";
 
 import {
   signInWithEmailAndPassword,
-  onAuthStateChanged,
-  User,
   signInWithPopup,
   sendPasswordResetEmail,
-  SignInMethod,
+  onAuthStateChanged,
+  getAuth,
+  User,
 } from "firebase/auth";
 import { auth, provider } from "../FirebaseConfig";
-import { useAuthState } from "react-firebase-hooks/auth";
+// import { useAuthState } from "react-firebase-hooks/auth";
 
 import { Navigate, Link as ReactLink } from "react-router-dom";
-import ReactModal from "react-modal";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { async } from "@firebase/util";
-
-function Copyright(props: any) {
+import Modal from "react-modal";
+import { ContactSupportOutlined } from "@material-ui/icons";
+function Copyright() {
   return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
+    <Typography variant="body2" color="textSecondary" align="center">
       {"Copyright © "}
       <Link color="inherit" href="https://mui.com/">
         Your Website
@@ -51,41 +46,45 @@ function Copyright(props: any) {
   );
 }
 
-function getModalStyle() {
-  const top = 50;
-  const left = 50;
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    marginTop: theme.spacing(8),
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  avatar: {
+    margin: theme.spacing(1),
+    backgroundColor: theme.palette.secondary.main,
+  },
+  form: {
+    width: "100%", // Fix IE 11 issue.
+    marginTop: theme.spacing(1),
+  },
+  submit: {
+    margin: theme.spacing(3, 0, 2),
+  },
+}));
 
-  return {
-    top: `${top}%`,
-    left: `${left}%`,
-    transform: `translate(-${top}%, -${left}%)`,
-  };
-}
-
-const theme = createTheme();
-
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
+const customStyles = {
+  content: {
+    top: "20%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    marginRight: "-50%",
+    transform: "translate(-50%, -50%)",
+    minWidth: "40%",
+  },
 };
 
 const Login = () => {
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
-  // const [user, setuser] = useState<User | string | null | undefined>();
-  // const [user, setuser] = useState<any>();
   const [openModal, setOpenModal] = React.useState(false);
   const [resetEmail, setResetEmail] = useState("");
-  const handleOpen = () => setOpenModal(true);
-  const handleClose = () => setOpenModal(false);
-  const [user, loading, error] = useAuthState(auth);
+  const [user, setUser] = useState<User | null>();
+  // const response = useQuery("user");
 
   // パスワードリセットメール送信
   const sendResetEmail = async (e: React.MouseEvent<HTMLElement>) => {
@@ -103,6 +102,7 @@ const Login = () => {
 
   // ログイン
   const handleSubmit = async (e: any) => {
+    console.log("loginEmail" + loginEmail);
     e.preventDefault();
     await signInWithEmailAndPassword(auth, loginEmail, loginPassword).catch(
       (error) => alert(error.message)
@@ -116,115 +116,100 @@ const Login = () => {
     );
   };
 
+  const classes = useStyles();
+
+  useEffect(() => {
+    // const { user } = useAuthContext();
+    console.log(user);
+    return onAuthStateChanged(getAuth(), (user) => {
+      setUser(user);
+    });
+  }, []);
+
   return (
     <>
       {user ? (
         <Navigate to={"/"} />
       ) : (
         <>
-          <ThemeProvider theme={theme}>
-            <Container component="main" maxWidth="xs">
-              <CssBaseline />
-              <Box
-                sx={{
-                  marginTop: 8,
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                }}
-              >
-                <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-                  <LockOpenOutlinedIcon />
-                </Avatar>
-                <Typography component="h1" variant="h5">
-                  ログイン
-                </Typography>
-                <Box
-                  component="form"
-                  onSubmit={handleSubmit}
-                  noValidate
-                  sx={{ mt: 1 }}
+          <Container component="main" maxWidth="xs">
+            <CssBaseline />
+            <div className={classes.paper}>
+              <Avatar className={classes.avatar}>
+                <LockOutlinedIcon />
+              </Avatar>
+              <Typography component="h1" variant="h5">
+                ログイン
+              </Typography>
+              <form className={classes.form} noValidate onSubmit={handleSubmit}>
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                  autoComplete="email"
+                  autoFocus
+                  value={loginEmail}
+                  onChange={(e) => setLoginEmail(e.target.value)}
+                />
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  autoComplete="current-password"
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
+                />
+                <FormControlLabel
+                  control={<Checkbox value="remember" color="primary" />}
+                  label="Remember me"
+                />
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  className={classes.submit}
                 >
-                  <TextField
-                    margin="normal"
-                    required
-                    fullWidth
-                    id="email"
-                    label="Email Address"
-                    name="email"
-                    autoComplete="email"
-                    autoFocus
-                    value={loginEmail}
-                    onChange={(e) => setLoginEmail(e.target.value)}
-                  />
-                  <TextField
-                    margin="normal"
-                    required
-                    fullWidth
-                    name="password"
-                    label="Password"
-                    type="password"
-                    id="password"
-                    autoComplete="current-password"
-                    value={loginPassword}
-                    onChange={(e) => setLoginPassword(e.target.value)}
-                  />
-                  <FormControlLabel
-                    control={<Checkbox value="remember" color="primary" />}
-                    label="Remember me"
-                  />
-                  <Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                    sx={{ mt: 3, mb: 2 }}
-                  >
-                    ログイン
-                  </Button>
+                  ログイン
+                </Button>
 
-                  <Grid container>
-                    <Grid item xs>
-                      <Link
-                        onClick={() => setOpenModal(true)}
-                        href="#"
-                        variant="body2"
-                      >
-                        パスワードリセット
-                      </Link>
-                    </Grid>
-
-                    <Grid item xs>
-                      新規登録は
-                      <ReactLink to={"/register/"}>こちら</ReactLink>
-                    </Grid>
+                <Grid container>
+                  <Grid item xs>
+                    <Link
+                      onClick={() => setOpenModal(true)}
+                      href="#"
+                      variant="body2"
+                    >
+                      パスワードリセット
+                    </Link>
                   </Grid>
 
-                  <Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                    color="primary"
-                    startIcon={<CameraIcon />}
-                    sx={{ mt: 3, mb: 2 }}
-                    onClick={signInGoogle}
-                  >
-                    SignIn with Google
-                  </Button>
-                </Box>
-              </Box>
+                  <Grid item xs>
+                    新規登録は
+                    <ReactLink to={"/register/"}>こちら</ReactLink>
+                  </Grid>
+                </Grid>
 
-              <Modal
-                open={openModal}
-                onClose={handleClose}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-              >
-                <Box sx={style}>
-                  <Typography
-                    id="modal-modal-description"
-                    fontSize={8}
-                    sx={{ mt: 2 }}
-                  >
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  startIcon={<CameraIcon />}
+                  onClick={signInGoogle}
+                >
+                  SignIn with Google
+                </Button>
+
+                <Modal isOpen={openModal} style={customStyles}>
+                  <Typography id="modal-modal-description">
                     入力したアドレスにパスワードリセットメールを送信します
                   </Typography>
                   <TextField
@@ -242,12 +227,15 @@ const Login = () => {
                   <IconButton onClick={sendResetEmail}>
                     <SendIcon />
                   </IconButton>
-                </Box>
-              </Modal>
+                  <CloseIcon onClick={() => setOpenModal(false)}></CloseIcon>
+                </Modal>
+              </form>
+            </div>
 
-              <Copyright sx={{ mt: 8, mb: 4 }} />
-            </Container>
-          </ThemeProvider>
+            <Box mt={8}>
+              <Copyright />
+            </Box>
+          </Container>
         </>
       )}
       ;

@@ -1,36 +1,43 @@
-import { createContext, useState, useContext, useEffect } from "react";
-import { auth } from "../FirebaseConfig";
-import { User } from "firebase/auth";
+import {
+  createContext,
+  useState,
+  useContext,
+  useEffect,
+  ReactNode,
+} from "react";
+// import { auth } from "../FirebaseConfig";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import type { User } from "firebase/auth";
 
-const AuthContext = createContext("");
+export type GlobalAuthState = {
+  user: User | null | undefined;
+};
 
-export function useAuthContext() {
-  return useContext(AuthContext);
-}
+const initialState: GlobalAuthState = {
+  user: undefined,
+};
 
-export function AuthProvider({ children }: any) {
-  const [user, setUser] = useState<User | null>();
-  const [loading, setLoading] = useState(true);
+const AuthContext = createContext<GlobalAuthState>(initialState);
 
-  const value: any = {
-    user,
-    loading,
-  };
+type Props = { children: ReactNode };
+
+export const AuthProvider = ({ children }: Props) => {
+  const [user, setUser] = useState<GlobalAuthState>(initialState);
+  // const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log("ss");
-    const unsubscribed = auth.onAuthStateChanged((user) => {
-      setUser(user);
-      console.log(value);
-    });
-    return () => {
-      unsubscribed();
-    };
+    try {
+      const auth = getAuth();
+      return onAuthStateChanged(auth, (user) => {
+        setUser({ user });
+      });
+    } catch (error) {
+      setUser(initialState);
+      throw error;
+    }
   }, []);
 
-  return (
-    <AuthContext.Provider value={value}>
-      {!loading && children}
-    </AuthContext.Provider>
-  );
-}
+  return <AuthContext.Provider value={user}>{children}</AuthContext.Provider>;
+};
+
+export const useAuthContext = () => useContext(AuthContext);
