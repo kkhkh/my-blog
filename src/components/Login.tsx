@@ -16,8 +16,8 @@ import SendIcon from "@material-ui/icons/Send";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import { makeStyles } from "@material-ui/core/styles";
 import CloseIcon from "@mui/icons-material/Close";
-import { useQuery } from "react-query";
-import { useAuthContext } from "../context/AuthContext";
+import useQueryFirebaseUser from "../hooks/useQueryFirebaseUser";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import {
   signInWithEmailAndPassword,
@@ -83,8 +83,6 @@ const Login = () => {
   const [loginPassword, setLoginPassword] = useState("");
   const [openModal, setOpenModal] = React.useState(false);
   const [resetEmail, setResetEmail] = useState("");
-  const [user, setUser] = useState<User | null>();
-  // const response = useQuery("user");
 
   // パスワードリセットメール送信
   const sendResetEmail = async (e: React.MouseEvent<HTMLElement>) => {
@@ -99,14 +97,17 @@ const Login = () => {
         setResetEmail("");
       });
   };
-
+  const queryClient = useQueryClient();
   // ログイン
   const handleSubmit = async (e: any) => {
-    console.log("loginEmail" + loginEmail);
     e.preventDefault();
-    await signInWithEmailAndPassword(auth, loginEmail, loginPassword).catch(
-      (error) => alert(error.message)
-    );
+    await signInWithEmailAndPassword(auth, loginEmail, loginPassword)
+      .then((res) => {
+        queryClient.setQueryData(["fireBaseUser"], res);
+        console.log(res);
+      })
+      .catch((error) => alert(error.message));
+    console.log(auth);
   };
 
   // signin with google
@@ -116,19 +117,16 @@ const Login = () => {
     );
   };
 
-  const classes = useStyles();
-
+  const { fireBaseUser } = useQueryFirebaseUser();
   useEffect(() => {
-    // const { user } = useAuthContext();
-    console.log(user);
-    return onAuthStateChanged(getAuth(), (user) => {
-      setUser(user);
-    });
+    console.log(fireBaseUser);
   }, []);
+
+  const classes = useStyles();
 
   return (
     <>
-      {user ? (
+      {fireBaseUser ? (
         <Navigate to={"/"} />
       ) : (
         <>

@@ -23,6 +23,7 @@ import SettingsAccessibilityIcon from "@mui/icons-material/SettingsAccessibility
 import SearchIcon from "@mui/icons-material/Search";
 import ButtonBase from "@mui/material/ButtonBase";
 import Paper from "@mui/material/Paper";
+import useQueryFirebaseUser from "../hooks/useQueryFirebaseUser";
 
 // function Copyright() {
 //   return (
@@ -87,12 +88,14 @@ const Home = () => {
   // const [user, setUser] = useState<User | null>();
   const [loading, setLoading] = useState(true);
 
-  // useEffect(() => {
+  //  useEffect(() => {
   //   onAuthStateChanged(auth, (currentUser) => {
-  //     setUser(currentUser);
+  //  setUser(currentUser);
   //     setLoading(false);
   //   });
-  // }, []);
+  //  }, []);
+
+  const { fireBaseUser } = useQueryFirebaseUser();
 
   const navigate = useNavigate();
 

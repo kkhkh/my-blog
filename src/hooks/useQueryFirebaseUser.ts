@@ -1,36 +1,25 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Api } from "const";
+import { User } from "firebase/auth";
+import { useEffect } from "react";
+import { auth } from "../FirebaseConfig";
 
 const useQueryFirebaseUser = () => {
   // queryClient
   const queryClient = useQueryClient();
+  useQuery<User | null>(["fireBaseUser"], () => null);
 
-  // useQuery
-  const {
-    data: firebaseUser,
-    isLoading: firebaseUserLoading,
-    isFetching: firebaseUserFetching,
-  } = useQuery(
-    ["firebaseUser"],
-    async () => {
-      const response = await Api.getClassCList();
-      console.log("useQueryClassCList:", response);
+  useEffect(() => {
+    const unsubscribed = auth.onAuthStateChanged((user) => {
+      queryClient.setQueryData(["fireBaseUser"], user);
+    });
+    return () => {
+      unsubscribed();
+    };
+  });
 
-      return response.data;
-    },
-    {
-      onError(error) {
-        if (Api.isAxiosError(error)) console.error(error.message);
-        else console.error({ error });
-      },
-    }
-  );
-
-  return {
-    firebaseUser,
-    firebaseUserLoading,
-    firebaseUserFetching,
-  };
+  const fireBaseUser = queryClient.getQueryData<User | null>(["fireBaseUser"]);
+  return { fireBaseUser };
 };
 
 export default useQueryFirebaseUser;

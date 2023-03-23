@@ -19,6 +19,7 @@ import {
   useQuery,
 } from "@tanstack/react-query";
 import { AuthProvider } from "./context/AuthContext";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const App = () => {
   const [message, setMessage] = useState("");
@@ -30,9 +31,8 @@ const App = () => {
 
   return (
     // <div className="container">
-    // <AuthProvider>
-    // {/* <QueryClientProvider client={queryClient}> */}
-    <CookiesProvider>
+
+    <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <Routes>
           <Route path={"test"} element={<Test />} />
@@ -49,9 +49,8 @@ const App = () => {
           {/* </Route> */}
         </Routes>
       </BrowserRouter>
-    </CookiesProvider>
-    // {/* </QueryClientProvider> */}
-    // </AuthProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
     // </div>
   );
 };
