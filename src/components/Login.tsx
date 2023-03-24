@@ -32,7 +32,6 @@ import { auth, provider } from "../FirebaseConfig";
 
 import { Navigate, Link as ReactLink } from "react-router-dom";
 import Modal from "react-modal";
-import { ContactSupportOutlined } from "@material-ui/icons";
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
@@ -102,9 +101,9 @@ const Login = () => {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     await signInWithEmailAndPassword(auth, loginEmail, loginPassword)
-      .then((res) => {
-        queryClient.setQueryData(["fireBaseUser"], res);
-        console.log(res.user.getIdToken());
+      .then((userCredential) => {
+        queryClient.setQueryData(["fireBaseUser"], userCredential);
+        console.log(userCredential.user.getIdToken());
       })
       .catch((error) => alert(error.message));
     console.log(auth);

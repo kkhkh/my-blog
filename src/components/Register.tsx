@@ -59,7 +59,6 @@ const Register = () => {
       }
     );
   };
-  const { fireBaseUser } = useQueryFirebaseUser();
   // ブログユーザー登録
   const createUserBlog = () => {
     axios
@@ -72,7 +71,8 @@ const Register = () => {
         },
         {
           headers: {
-            Authorization: "Bearer " + fireBaseUser?.getIdToken(),
+            // Authorization: "Bearer " + fireBaseUser?.getIdToken(),
+            Authorization: "Bearer aaaaa",
             accept: "application/json",
             "Content-type": "application/json",
           },
@@ -91,7 +91,7 @@ const Register = () => {
       alert("エラー");
     }
   };
-
+  const fireBaseUser = queryClient.getQueryData<User | null>(["fireBaseUser"]);
   useEffect(() => {
     onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -127,7 +127,7 @@ const Register = () => {
                   noValidate
                   sx={{ mt: 1 }}
                 >
-                  <TextField
+                  {/* <TextField
                     margin="normal"
                     required
                     fullWidth
@@ -138,7 +138,28 @@ const Register = () => {
                     autoFocus
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
+                  /> */}
+                  {/* <input
+                    type="text"
+                    required
+                    id="email"
+                    name="email"
+                    defaultValue={signupEmail} */}
+                  {/* // onChange={(e) => setSignupEmail(e.target.value)} */}
+                  {/* /> */}
+                  {/* <TextField
+                    id="outlined-controlled"
+                    label="Controlled"
+                    value={name}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      setSignupEmail(event.target.value);
+                    }}
                   />
+                  <TextField
+                    id="outlined-uncontrolled"
+                    label="Uncontrolled"
+                    defaultValue="foo"
+                  /> */}
                   <TextField
                     margin="normal"
                     required

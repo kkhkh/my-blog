@@ -152,8 +152,10 @@ const Home = () => {
   const classes = useStyles();
   const { fireBaseUser } = useQueryFirebaseUser();
   useEffect(() => {
-    console.log("token");
-    console.log(fireBaseUser?.getIdToken());
+    (async () => {
+      console.log("token");
+      console.log(await fireBaseUser?.getIdToken());
+    })();
   }, []);
 
   return (
