@@ -104,7 +104,7 @@ const Login = () => {
     await signInWithEmailAndPassword(auth, loginEmail, loginPassword)
       .then((res) => {
         queryClient.setQueryData(["fireBaseUser"], res);
-        console.log(res);
+        console.log(res.user.getIdToken());
       })
       .catch((error) => alert(error.message));
     console.log(auth);

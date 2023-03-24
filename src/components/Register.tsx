@@ -20,7 +20,8 @@ import {
 import { auth } from "../FirebaseConfig";
 import { Navigate, Link as ReactLink } from "react-router-dom";
 import axios from "axios";
-import { useCookies } from "react-cookie";
+import useQueryFirebaseUser from "../hooks/useQueryFirebaseUser";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 function Copyright(props: any) {
   return (
@@ -46,19 +47,19 @@ const Register = () => {
   const [username, setUsername] = useState("");
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
-  const [cookies, setCookie] = useCookies(["token"]);
   const [user, setUser] = useState<User | null>();
 
+  const queryClient = useQueryClient();
   // FireBaseユーザー登録
   const createUserFireBase = () => {
     createUserWithEmailAndPassword(auth, signupEmail, signupPassword).then(
-      (userCredential: any) => {
-        setCookie("token", userCredential.user.accessToken);
-        console.log(cookies["token"]);
+      (userCredential) => {
+        queryClient.setQueryData(["fireBaseUser"], userCredential);
+        console.log(userCredential.user.getIdToken());
       }
     );
   };
-
+  const { fireBaseUser } = useQueryFirebaseUser();
   // ブログユーザー登録
   const createUserBlog = () => {
     axios
@@ -71,7 +72,7 @@ const Register = () => {
         },
         {
           headers: {
-            Authorization: "Bearer " + cookies["token"],
+            Authorization: "Bearer " + fireBaseUser?.getIdToken(),
             accept: "application/json",
             "Content-type": "application/json",
           },
