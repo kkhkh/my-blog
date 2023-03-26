@@ -16,19 +16,15 @@ import SendIcon from "@material-ui/icons/Send";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import { makeStyles } from "@material-ui/core/styles";
 import CloseIcon from "@mui/icons-material/Close";
-import useQueryFirebaseUser from "../hooks/useQueryFirebaseUser";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import {
   signInWithEmailAndPassword,
   signInWithPopup,
   sendPasswordResetEmail,
-  onAuthStateChanged,
-  getAuth,
   User,
 } from "firebase/auth";
 import { auth, provider } from "../FirebaseConfig";
-// import { useAuthState } from "react-firebase-hooks/auth";
 
 import { Navigate, Link as ReactLink } from "react-router-dom";
 import Modal from "react-modal";
@@ -116,7 +112,8 @@ const Login = () => {
     );
   };
 
-  const { fireBaseUser } = useQueryFirebaseUser();
+  const fireBaseUser = queryClient.getQueryData<User | null>(["fireBaseUser"]);
+
   useEffect(() => {
     console.log(fireBaseUser);
   }, []);

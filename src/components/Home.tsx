@@ -8,7 +8,6 @@ import AppBar from "@mui/material/AppBar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import Avatar from "@mui/material/Avatar";
-import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -20,8 +19,6 @@ import SettingsAccessibilityIcon from "@mui/icons-material/SettingsAccessibility
 import SearchIcon from "@mui/icons-material/Search";
 import ButtonBase from "@mui/material/ButtonBase";
 import useQueryFirebaseUser from "../hooks/useQueryFirebaseUser";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import LockOutlinedIcon from "@material-ui/icons/LockOpenOutlined";
 import { makeStyles } from "@material-ui/core";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 // function Copyright() {
@@ -194,20 +191,7 @@ const Home = () => {
                 </Container>
               </AppBar>
             </Box>
-            <ButtonGroup variant="text" aria-label="text button group">
-              <Button>
-                <NavLink to="/">ホーム</NavLink>
-              </Button>
-              <Button>
-                <NavLink to="/users">ユーザー一覧</NavLink>
-              </Button>
-              <Button>
-                <NavLink to="/posts">記事一覧</NavLink>
-              </Button>
-              <Button>
-                <NavLink to={"/createarticle/"}>投稿</NavLink>
-              </Button>
-            </ButtonGroup>
+
             <main>
               {/* Hero unit */}
               <Box
@@ -217,6 +201,20 @@ const Home = () => {
                   pb: 6,
                 }}
               >
+                <ButtonGroup variant="text" aria-label="text button group">
+                  <Button>
+                    <NavLink to="/">ホーム</NavLink>
+                  </Button>
+                  <Button>
+                    <NavLink to="/users">ユーザー一覧</NavLink>
+                  </Button>
+                  <Button>
+                    <NavLink to="/posts">記事一覧</NavLink>
+                  </Button>
+                  <Button>
+                    <NavLink to={"/createarticle/"}>投稿</NavLink>
+                  </Button>
+                </ButtonGroup>
                 <Container maxWidth="md">
                   <Typography
                     component="h1"
@@ -258,7 +256,6 @@ const Home = () => {
           </ThemeProvider>
         </>
       )}
-      ;
     </>
   );
 };
