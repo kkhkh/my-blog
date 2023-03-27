@@ -160,101 +160,53 @@ const Home = () => {
       {!fireBaseUser ? (
         <Navigate to={"/login"} />
       ) : (
-        <>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <Box sx={{ flexGrow: 1 }}>
-              <AppBar>
-                <Container maxWidth="md">
-                  <Toolbar>
-                    <SettingsAccessibilityIcon sx={{ mr: 2 }} />
-                    My Blog
-                    <ButtonBase sx={{ ml: "auto" }}>
-                      <Search>
-                        <SearchIconWrapper>
-                          <SearchIcon />
-                        </SearchIconWrapper>
-                        <StyledInputBase
-                          placeholder="Search…"
-                          inputProps={{ "aria-label": "search" }}
-                        />
-                      </Search>
-                      {fireBaseUser.displayName ? (
-                        <Avatar
-                          {...stringAvatar(fireBaseUser.displayName || "")}
-                        />
-                      ) : (
-                        <AccountCircleIcon />
-                      )}
-                    </ButtonBase>
-                  </Toolbar>
-                </Container>
-              </AppBar>
-            </Box>
-
-            <main>
-              {/* Hero unit */}
-              <Box
-                sx={{
-                  bgcolor: "background.paper",
-                  pt: 8,
-                  pb: 6,
-                }}
+        <main>
+          {/* Hero unit */}
+          <Box
+            sx={{
+              bgcolor: "background.paper",
+              pt: 8,
+              pb: 6,
+            }}
+          >
+            <Container maxWidth="md">
+              <Typography
+                component="h1"
+                variant="h5"
+                align="center"
+                color="text.primary"
+                gutterBottom
               >
-                <ButtonGroup variant="text" aria-label="text button group">
-                  <Button>
-                    <NavLink to="/">ホーム</NavLink>
-                  </Button>
-                  <Button>
-                    <NavLink to="/users">ユーザー一覧</NavLink>
-                  </Button>
-                  <Button>
-                    <NavLink to="/posts">記事一覧</NavLink>
-                  </Button>
-                  <Button>
-                    <NavLink to={"/createarticle/"}>投稿</NavLink>
-                  </Button>
-                </ButtonGroup>
-                <Container maxWidth="md">
-                  <Typography
-                    component="h1"
-                    variant="h5"
-                    align="center"
-                    color="text.primary"
-                    gutterBottom
-                  >
-                    My blog
-                  </Typography>
+                My blog
+              </Typography>
 
-                  <Typography
-                    variant="h6"
-                    align="center"
-                    color="text.secondary"
-                    paragraph
-                  >
-                    {fireBaseUser.email}
-                  </Typography>
-                  <Typography
-                    variant="h5"
-                    align="center"
-                    color="text.secondary"
-                    paragraph
-                  >
-                    <Button onClick={logout}>ログアウト</Button>
-                  </Typography>
+              <Typography
+                variant="h6"
+                align="center"
+                color="text.secondary"
+                paragraph
+              >
+                {fireBaseUser.email}
+              </Typography>
+              <Typography
+                variant="h5"
+                align="center"
+                color="text.secondary"
+                paragraph
+              >
+                <Button onClick={logout}>ログアウト</Button>
+              </Typography>
 
-                  <Stack
-                    sx={{ pt: 4 }}
-                    direction="row"
-                    spacing={2}
-                    justifyContent="center"
-                  ></Stack>
-                </Container>
-              </Box>
-              <Container sx={{ py: 8 }} maxWidth="md"></Container>
-            </main>
-          </ThemeProvider>
-        </>
+              <Stack
+                sx={{ pt: 4 }}
+                direction="row"
+                spacing={2}
+                justifyContent="center"
+              ></Stack>
+            </Container>
+          </Box>
+          <Container sx={{ py: 8 }} maxWidth="md"></Container>
+        </main>
       )}
     </>
   );

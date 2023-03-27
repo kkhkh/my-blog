@@ -158,122 +158,69 @@ const Users = () => {
 
   const theme = createTheme();
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      {/* <AppBar position="relative"> */}
-      <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="static">
-          <Toolbar>
-            <SettingsAccessibilityIcon sx={{ mr: 2 }} />
-            <Typography variant="h6" color="inherit" noWrap></Typography>
-            <Search>
-              <SearchIconWrapper>
-                <SearchIcon />
-              </SearchIconWrapper>
-              <StyledInputBase
-                placeholder="Search…"
-                inputProps={{ "aria-label": "search" }}
-              />
-            </Search>
-          </Toolbar>
-        </AppBar>
+    <main>
+      {/* Hero unit */}
+      <Box
+        sx={{
+          bgcolor: "background.paper",
+          pt: 8,
+          pb: 6,
+        }}
+      >
+        <Container maxWidth="md">
+          <Typography
+            variant="h5"
+            align="center"
+            color="text.secondary"
+            paragraph
+          >
+            ユーザー一覧
+          </Typography>
+          <Stack
+            sx={{ pt: 4 }}
+            direction="row"
+            spacing={2}
+            justifyContent="center"
+          >
+            <Button variant="contained">Main call to action</Button>
+            <Button variant="outlined">Secondary action</Button>
+          </Stack>
+        </Container>
       </Box>
-      <ButtonGroup variant="text" aria-label="text button group">
-        <Button>
-          <NavLink to="/">ホーム</NavLink>
-        </Button>
-        <Button>
-          <NavLink to="/users">ユーザー一覧</NavLink>
-        </Button>
-        <Button>
-          <NavLink to="/posts">記事一覧</NavLink>
-        </Button>
-        <Button>
-          <NavLink to={"/createarticle/"}>投稿</NavLink>
-        </Button>
-      </ButtonGroup>
-      <main>
-        {/* Hero unit */}
-        <Box
-          sx={{
-            bgcolor: "background.paper",
-            pt: 8,
-            pb: 6,
-          }}
-        >
-          <Container maxWidth="md">
-            <Typography
-              variant="h5"
-              align="center"
-              color="text.secondary"
-              paragraph
-            >
-              ユーザー一覧
-            </Typography>
-            <Stack
-              sx={{ pt: 4 }}
-              direction="row"
-              spacing={2}
-              justifyContent="center"
-            >
-              <Button variant="contained">Main call to action</Button>
-              <Button variant="outlined">Secondary action</Button>
-            </Stack>
-          </Container>
-        </Box>
-        {/* <Container sx={{ py: 8 }} maxWidth="md">
+      {/* <Container sx={{ py: 8 }} maxWidth="md">
           <Grid container spacing={4}> */}
-        <List
-          sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
-        >
-          {users.map((user) => {
-            return (
-              <>
-                <ListItem alignItems="flex-start">
-                  <ListItemAvatar>
-                    <Avatar {...stringAvatar(user.name || "")} />
-                    <ListItemText
-                      primary={user.name}
-                      secondary={
-                        <React.Fragment>
-                          <Typography
-                            sx={{ display: "inline" }}
-                            component="span"
-                            variant="body2"
-                            color="text.primary"
-                          >
-                            {user.email}
-                          </Typography>
-                        </React.Fragment>
-                      }
-                    />
-                  </ListItemAvatar>
-                </ListItem>
-                <Divider variant="inset" component="li" />
-              </>
-            );
-          })}
-        </List>
-        {/* </Grid>
+      <List sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}>
+        {users.map((user) => {
+          return (
+            <>
+              <ListItem alignItems="flex-start">
+                <ListItemAvatar>
+                  <Avatar {...stringAvatar(user.name || "")} />
+                  <ListItemText
+                    primary={user.name}
+                    secondary={
+                      <React.Fragment>
+                        <Typography
+                          sx={{ display: "inline" }}
+                          component="span"
+                          variant="body2"
+                          color="text.primary"
+                        >
+                          {user.email}
+                        </Typography>
+                      </React.Fragment>
+                    }
+                  />
+                </ListItemAvatar>
+              </ListItem>
+              <Divider variant="inset" component="li" />
+            </>
+          );
+        })}
+      </List>
+      {/* </Grid>
         </Container> */}
-      </main>
-      {/* Footer */}
-      <Box sx={{ bgcolor: "background.paper", p: 6 }} component="footer">
-        <Typography variant="h6" align="center" gutterBottom>
-          Footer
-        </Typography>
-        <Typography
-          variant="subtitle1"
-          align="center"
-          color="text.secondary"
-          component="p"
-        >
-          Something here to give the footer a purpose!
-        </Typography>
-        <Copyright />
-      </Box>
-      {/* End footer */}
-    </ThemeProvider>
+    </main>
   );
 };
 

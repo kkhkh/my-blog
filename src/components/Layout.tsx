@@ -15,8 +15,13 @@ import Stack from "@mui/material/Stack";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Toolbar from "@mui/material/Toolbar";
 import SettingsAccessibilityIcon from "@mui/icons-material/SettingsAccessibility";
-import SearchIcon from "@mui/icons-material/Search";
 import { styled, alpha } from "@mui/material/styles";
+import Link from "@mui/material/Link";
+import SearchIcon from "@mui/icons-material/Search";
+import ButtonBase from "@mui/material/ButtonBase";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import Avatar from "@mui/material/Avatar";
+import useQueryFirebaseUser from "../hooks/useQueryFirebaseUser";
 
 const theme = createTheme();
 
@@ -62,26 +67,79 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
   justifyContent: "center",
 }));
 
+function Copyright() {
+  return (
+    <Typography variant="body2" color="text.secondary" align="center">
+      {"Copyright © "}
+      <Link color="inherit" href="https://mui.com/">
+        Your Website
+      </Link>{" "}
+      {new Date().getFullYear()}
+      {"."}
+    </Typography>
+  );
+}
+
+function stringToColor(string: string) {
+  let hash = 0;
+  let i;
+
+  /* eslint-disable no-bitwise */
+  for (i = 0; i < string.length; i += 1) {
+    hash = string.charCodeAt(i) + ((hash << 5) - hash);
+  }
+
+  let color = "#";
+
+  for (i = 0; i < 3; i += 1) {
+    const value = (hash >> (i * 8)) & 0xff;
+    color += `00${value.toString(16)}`.slice(-2);
+  }
+  /* eslint-enable no-bitwise */
+
+  return color;
+}
+
+function stringAvatar(name: string) {
+  return {
+    sx: {
+      bgcolor: stringToColor(name),
+    },
+    children: `${name.charAt(0)}`,
+  };
+}
+
 const Layout: React.FC = () => {
+  const { fireBaseUser } = useQueryFirebaseUser();
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       {/* <AppBar position="relative"> */}
       <Box sx={{ flexGrow: 1 }}>
         <AppBar position="static">
-          <Toolbar>
-            <SettingsAccessibilityIcon sx={{ mr: 2 }} />
-            <Typography variant="h6" color="inherit" noWrap></Typography>
-            <Search>
-              <SearchIconWrapper>
-                <SearchIcon />
-              </SearchIconWrapper>
-              <StyledInputBase
-                placeholder="Search…"
-                inputProps={{ "aria-label": "search" }}
-              />
-            </Search>
-          </Toolbar>
+          <Container maxWidth="md">
+            <Toolbar>
+              <SettingsAccessibilityIcon sx={{ mr: 2 }} />
+              My Blog
+              <ButtonBase sx={{ ml: "auto" }}>
+                <Search>
+                  <SearchIconWrapper>
+                    <SearchIcon />
+                  </SearchIconWrapper>
+                  <StyledInputBase
+                    placeholder="Search…"
+                    inputProps={{ "aria-label": "search" }}
+                  />
+                </Search>
+                {fireBaseUser && fireBaseUser.displayName ? (
+                  <Avatar {...stringAvatar(fireBaseUser.displayName || "")} />
+                ) : (
+                  <AccountCircleIcon />
+                )}
+              </ButtonBase>
+            </Toolbar>
+          </Container>
         </AppBar>
       </Box>
       <ButtonGroup variant="text" aria-label="text button group">
@@ -94,7 +152,27 @@ const Layout: React.FC = () => {
         <Button>
           <NavLink to="/posts">記事一覧</NavLink>
         </Button>
+        <Button>
+          <NavLink to={"/createarticle/"}>投稿</NavLink>
+        </Button>
       </ButtonGroup>
+      <Outlet />
+      {/* Footer */}
+      <Box sx={{ bgcolor: "background.paper", p: 6 }} component="footer">
+        <Typography variant="h6" align="center" gutterBottom>
+          Footer
+        </Typography>
+        <Typography
+          variant="subtitle1"
+          align="center"
+          color="text.secondary"
+          component="p"
+        >
+          Something here to give the footer a purpose!
+        </Typography>
+        <Copyright />
+      </Box>
+      {/* End footer */}
     </ThemeProvider>
   );
 };
