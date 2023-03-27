@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useState, useRef } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { styled, alpha } from "@mui/material/styles";
 import { NavLink } from "react-router-dom";
 import InputBase from "@mui/material/InputBase";
 import AppBar from "@mui/material/AppBar";
 import Button from "@mui/material/Button";
+import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@material-ui/core/TextField";
 import CssBaseline from "@mui/material/CssBaseline";
 import Grid from "@mui/material/Grid";
@@ -15,6 +16,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import SettingsAccessibilityIcon from "@mui/icons-material/SettingsAccessibility";
 import SearchIcon from "@mui/icons-material/Search";
+import Chip from "@mui/material/Chip";
 import { makeStyles } from "@material-ui/core/styles";
 import Stack from "@mui/material/Stack";
 import useQueryFirebaseUser from "../hooks/useQueryFirebaseUser";
@@ -83,11 +85,20 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(3, 0, 2),
   },
 }));
+
+type tag = {
+  createdAt: string;
+  name: string;
+  id: number;
+  updatedAt: string;
+};
+type AutocompleteOption = string;
 const CreateArticle = () => {
   // 会話の記録用のステート
   const [conversation, setConversation] = useState<any>([]);
   // ローディング表示用のステート
   const [loading, setLoading] = useState(false);
+  const [tagsLoading, setTagsLoading] = useState(false);
   // 前回のメッセージの保持、比較用
   const prevMessageRef = useRef("");
 
@@ -95,7 +106,25 @@ const CreateArticle = () => {
   const [content, setContent] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [thumbnailUrl, setThumbnailUrl] = useState("");
+  const tagsArray = [
+    { title: " Shawshank Redemption", year: 1994 },
+    { title: "The Godfather", year: 1972 },
+    { title: "The Godfather: Part II", year: 1974 },
+    { title: "The Dark Knight", year: 2008 },
+    { title: "12 Angry Men", year: 1957 },
+    { title: "Schindler's List", year: 1993 },
+    { title: "Pulp Fiction", year: 1994 },
+  ];
 
+  const [tags, setTags] = useState([
+    {
+      createdAt: "2014-10-10T04:50:40.000Z",
+      name: "name",
+      id: 0,
+      updatedAt: "2014-10-10T04:50:40.000Z",
+    },
+  ]);
+  const { fireBaseUser } = useQueryFirebaseUser();
   // 回答が取得されたとき
   useEffect(() => {
     // 直前のチャット内容
@@ -112,10 +141,24 @@ const CreateArticle = () => {
 
     // 会話の記録(直前のチャット内容の追加)
     setConversation([...conversation, ...newConversation]);
-
-    // メッセージの消去(フォームのクリア)
-    // setTitle("");
   }, [content]);
+
+  const getTags = async () => {
+    setTagsLoading(true);
+
+    const getTagsResponse = await axios.get(
+      "https://api-blog-dev.lightsail.ijcloud.jp/tags"
+    );
+    console.log({ getTagsResponse });
+    setTags(getTagsResponse.data.tags);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    // タグ一覧取得
+    getTags();
+    console.log(tags);
+  }, []);
 
   // フォーム送信時の処理
   const handleSubmit = useCallback(
@@ -171,7 +214,7 @@ const CreateArticle = () => {
     },
     [loading, title, conversation]
   );
-  const { fireBaseUser } = useQueryFirebaseUser();
+
   // signin with google
   const postArticle = async () => {
     axios
@@ -244,6 +287,22 @@ const CreateArticle = () => {
           <Grid sm={2} />
           <Grid lg={4} sm={4} spacing={4}>
             <form className={classes.form} noValidate onSubmit={handleSubmit}>
+              <Autocomplete
+                multiple
+                id="tags-standard"
+                options={tagsArray}
+                defaultValue={[tagsArray[1]]}
+                getOptionLabel={(option) => option.title}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="standard"
+                    label="Multiple values"
+                    placeholder="Favorites"
+                  />
+                )}
+              />
+
               <TextField
                 name="titile"
                 label="Title"

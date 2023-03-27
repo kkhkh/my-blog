@@ -15,7 +15,7 @@ const useQueryFirebaseUser = () => {
     return () => {
       unsubscribed();
     };
-  });
+  }, []);
 
   const fireBaseUser = queryClient.getQueryData<User | null>(["fireBaseUser"]);
   return { fireBaseUser };
