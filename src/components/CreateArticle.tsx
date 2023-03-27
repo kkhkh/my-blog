@@ -18,6 +18,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import { makeStyles } from "@material-ui/core/styles";
 import Stack from "@mui/material/Stack";
 import useQueryFirebaseUser from "../hooks/useQueryFirebaseUser";
+import Autocomplete from "@mui/material/Autocomplete";
 
 const API_URL = "https://api.openai.com/v1/";
 const MODEL = "gpt-3.5-turbo";
@@ -93,6 +94,14 @@ const CreateArticle = () => {
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [tag, setTag] = useState([
+    {
+      createdAt: "2014-10-10T04:50:40.000Z",
+      name: "name",
+      id: 0,
+      updatedAt: "2014-10-10T04:50:40.000Z",
+    },
+  ]);
   const [categoryId, setCategoryId] = useState("");
   const [thumbnailUrl, setThumbnailUrl] = useState("");
 
@@ -194,6 +203,21 @@ const CreateArticle = () => {
       .then((response) => {});
   };
 
+  // getTags
+  const getTags = async () => {
+    setLoading(true);
+    const getTagsResponse = await axios.get(
+      "https://api-blog-dev.lightsail.ijcloud.jp/tags"
+    );
+    console.log({ getTagsResponse });
+    setTag(getTagsResponse.data.tags);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    getTags();
+  }, []);
+
   interface MemoProps {
     prevMessage: string;
     answer: string;
@@ -263,6 +287,24 @@ const CreateArticle = () => {
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
               ></TextField>
+
+              {!loading && (
+                <Autocomplete
+                  multiple
+                  id="tags-standard"
+                  options={tag}
+                  getOptionLabel={(option) => option.name}
+                  defaultValue={[tag[0]]}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="standard"
+                      label="tag"
+                      placeholder="Favorites"
+                    />
+                  )}
+                />
+              )}
 
               <Stack spacing={2} direction="row">
                 <Button
