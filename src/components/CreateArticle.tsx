@@ -16,6 +16,9 @@ import ButtonGroup from "@mui/material/ButtonGroup";
 import SettingsAccessibilityIcon from "@mui/icons-material/SettingsAccessibility";
 import SearchIcon from "@mui/icons-material/Search";
 import { makeStyles } from "@material-ui/core/styles";
+import Stack from "@mui/material/Stack";
+import useQueryFirebaseUser from "../hooks/useQueryFirebaseUser";
+
 const API_URL = "https://api.openai.com/v1/";
 const MODEL = "gpt-3.5-turbo";
 const API_KEY = "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";
@@ -90,6 +93,8 @@ const CreateArticle = () => {
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [categoryId, setCategoryId] = useState("");
+  const [thumbnailUrl, setThumbnailUrl] = useState("");
 
   // 回答が取得されたとき
   useEffect(() => {
@@ -154,7 +159,6 @@ const CreateArticle = () => {
         );
         console.log(response);
         // 回答の取得
-        // setAnswer(response.data.choices[0].message.content.trim());
         setContent(response.data.choices[0].message.content.trim());
       } catch (error) {
         // エラーハンドリング
@@ -167,6 +171,28 @@ const CreateArticle = () => {
     },
     [loading, title, conversation]
   );
+  const { fireBaseUser } = useQueryFirebaseUser();
+  // signin with google
+  const postArticle = async () => {
+    axios
+      .post(
+        "https://api-blog-dev.lightsail.ijcloud.jp/articles",
+        {
+          title: title,
+          content: content,
+          categoryId: categoryId,
+          thumbnailUrl: thumbnailUrl,
+        },
+        {
+          headers: {
+            Authorization: "Bearer " + fireBaseUser?.getIdToken(),
+            accept: "application/json",
+            "Content-type": "application/json",
+          },
+        }
+      )
+      .then((response) => {});
+  };
 
   interface MemoProps {
     prevMessage: string;
@@ -216,7 +242,7 @@ const CreateArticle = () => {
       <main>
         <Grid container>
           <Grid sm={2} />
-          <Grid lg={8} sm={8} spacing={10}>
+          <Grid lg={4} sm={4} spacing={4}>
             <form className={classes.form} noValidate onSubmit={handleSubmit}>
               <TextField
                 name="titile"
@@ -238,9 +264,23 @@ const CreateArticle = () => {
                 onChange={(e) => setContent(e.target.value)}
               ></TextField>
 
-              <Button variant="outlined" color="primary" onClick={handleSubmit}>
-                本文自動生成
-              </Button>
+              <Stack spacing={2} direction="row">
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  onClick={handleSubmit}
+                >
+                  本文自動生成
+                </Button>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  onClick={postArticle}
+                >
+                  投稿
+                </Button>
+              </Stack>
             </form>
           </Grid>
         </Grid>

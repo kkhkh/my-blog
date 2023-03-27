@@ -44,7 +44,7 @@ function Copyright(props: any) {
 const theme = createTheme();
 
 const Register = () => {
-  const [username, setUsername] = useState("");
+  const [userName, setUserName] = useState("");
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
   const [user, setUser] = useState<User | null>();
@@ -65,14 +65,13 @@ const Register = () => {
       .post(
         "https://api-blog-dev.lightsail.ijcloud.jp/users",
         {
-          name: username,
+          name: userName,
           email: signupEmail,
           password: signupPassword,
         },
         {
           headers: {
-            // Authorization: "Bearer " + fireBaseUser?.getIdToken(),
-            Authorization: "Bearer aaaaa",
+            Authorization: "Bearer " + fireBaseUser?.getIdToken(),
             accept: "application/json",
             "Content-type": "application/json",
           },
@@ -160,6 +159,18 @@ const Register = () => {
                     label="Uncontrolled"
                     defaultValue="foo"
                   /> */}
+                  <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="username"
+                    label="User Name"
+                    name="username"
+                    autoComplete="username"
+                    autoFocus
+                    value={userName}
+                    onChange={(e) => setUserName(e.target.value)}
+                  />
                   <TextField
                     margin="normal"
                     required
