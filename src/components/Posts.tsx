@@ -48,6 +48,13 @@ type article = {
   updatedAt: string;
 };
 
+// ページ全体
+const StyleContainer = styled.div`
+  width: 1000px;
+  margin: auto;
+`;
+
+// カテゴリ一覧
 const StyledCategories = styled.div`
   display: inline-block;
   margin: 0 0.1em 0.6em 0;
@@ -58,10 +65,13 @@ const StyledCategories = styled.div`
   text-align: center;
 `;
 
+// 中央寄せ
 const StyledCenter = styled.div`
+  margin: auto;
   text-align: center;
 `;
 
+// タグ一覧
 const StyledTags = styled.div`
   display: inline-block;
   margin: 0 0.5em 0.6em 0;
@@ -72,8 +82,42 @@ const StyledTags = styled.div`
   border-radius: 0.3em;
 `;
 
+// 画像
 const StyledImg = styled.img`
   width: 180px;
+`;
+
+// グリッド全体
+const StyledGridContainer = styled.div`
+  display: grid;
+  width: auto;
+  height: auto;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 300px;
+  gap: 10px 20px;
+  margin: auto;
+  margin-top: 50px;
+`;
+
+// 各グリッド
+const StyledItem = styled.div`
+  border: 1px black solid;
+`;
+
+// 投稿タイトル
+const StyledTitle = styled.div`
+  font-size: 1.5em;
+  margin: 10px;
+`;
+
+// 投稿本文
+const StyledContent = styled.div`
+  margin: 10px;
+`;
+
+// 投稿サムネイル
+const StyledThumbnail = styled.img`
+  width: 100%;
 `;
 
 const Search = muiStyled("div")(({ theme }) => ({
@@ -122,7 +166,7 @@ const Posts = () => {
   const { fireBaseUser } = useQueryFirebaseUser();
 
   useEffect(() => {
-    getArticles();
+    getAllinfo();
   }, []);
 
   const [tags, setTags] = useState([
@@ -160,166 +204,198 @@ const Posts = () => {
         },
       }
     );
-    console.log("tags");
     console.log({ getCategoriesResponse });
     setCategories(getCategoriesResponse.data.categories);
   };
 
   const getArticles = async () => {
+    const getArticlesResponse = await axios.get(
+      "https://api-blog-dev.lightsail.ijcloud.jp/articles",
+      {
+        headers: {
+          Authorization: "Bearer " + (await fireBaseUser?.getIdToken()),
+          accept: "application/json",
+        },
+      }
+    );
+    console.log({ getArticlesResponse });
+    setArticles(getArticlesResponse.data.articles);
+  };
+
+  const getAllinfo = async () => {
     console.log(await fireBaseUser?.getIdToken());
-    const tagsInfo: any = await getTags();
-    const categoryInfo: any = await getCategories();
+    await getTags();
+    await getCategories();
+    await getArticles();
   };
 
   const theme = createTheme();
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      {/* <AppBar position="relative"> */}
-      <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="static">
-          <Toolbar>
-            <SettingsAccessibilityIcon sx={{ mr: 2 }} />
-            <Typography variant="h6" color="inherit" noWrap></Typography>
-            <Search>
-              <SearchIconWrapper>
-                <SearchIcon />
-              </SearchIconWrapper>
-              <StyledInputBase
-                placeholder="Search…"
-                inputProps={{ "aria-label": "search" }}
-              />
-            </Search>
-          </Toolbar>
-        </AppBar>
-      </Box>
-      <ButtonGroup variant="text" aria-label="text button group">
-        <Button>
-          <NavLink to="/">ホーム</NavLink>
-        </Button>
-        <Button>
-          <NavLink to="/users">ユーザー一覧</NavLink>
-        </Button>
-        <Button>
-          <NavLink to="/posts">記事一覧</NavLink>
-        </Button>
-        <Button>
-          <NavLink to={"/createarticle/"}>投稿</NavLink>
-        </Button>
-      </ButtonGroup>
-      <main>
-        {/* Hero unit */}
-        <Box
-          sx={{
-            bgcolor: "background.paper",
-            pt: 8,
-            pb: 6,
-          }}
-        >
-          <Container maxWidth="md">
-            <Typography
-              variant="h5"
-              align="center"
-              color="text.secondary"
-              paragraph
-            >
-              投稿一覧
-            </Typography>
-            <div>
-              <StyledCenter>
-                <StyledImg src={break_cat_buti} alt="photo" />
-              </StyledCenter>
-            </div>
-            <Stack
-              sx={{ pt: 4 }}
-              direction="row"
-              spacing={2}
-              justifyContent="center"
-            >
-              <Button variant="contained">Main call to action</Button>
-              <Button variant="outlined">Secondary action</Button>
-            </Stack>
-          </Container>
+      <StyleContainer>
+        {/* <AppBar position="relative"> */}
+        <Box sx={{ flexGrow: 1 }}>
+          <AppBar position="static">
+            <Toolbar>
+              <SettingsAccessibilityIcon sx={{ mr: 2 }} />
+              <Typography variant="h6" color="inherit" noWrap></Typography>
+              <Search>
+                <SearchIconWrapper>
+                  <SearchIcon />
+                </SearchIconWrapper>
+                <StyledInputBase
+                  placeholder="Search…"
+                  inputProps={{ "aria-label": "search" }}
+                />
+              </Search>
+            </Toolbar>
+          </AppBar>
         </Box>
-        <StyledCenter>
-          {categories?.map((category, index) => {
-            return (
-              <React.Fragment key={index}>
-                <StyledCategories>{category.name}</StyledCategories>
-                {index !== categories.length - 1 && " / "}
-              </React.Fragment>
-            );
-            // return <StyledCategories>{category.name}</StyledCategories>;
-          })}
-        </StyledCenter>
-        <StyledCenter>
-          {tags?.map((tag) => {
-            return (
-              <StyledTags>
-                <i className="fas fa-tag"></i>
-                {tag.name}
-              </StyledTags>
-            );
-          })}
-        </StyledCenter>
+        <ButtonGroup variant="text" aria-label="text button group">
+          <Button>
+            <NavLink to="/">ホーム</NavLink>
+          </Button>
+          <Button>
+            <NavLink to="/users">ユーザー一覧</NavLink>
+          </Button>
+          <Button>
+            <NavLink to="/posts">記事一覧</NavLink>
+          </Button>
+          <Button>
+            <NavLink to={"/createarticle/"}>投稿</NavLink>
+          </Button>
+        </ButtonGroup>
+        <main>
+          {/* Hero unit */}
+          <Box
+            sx={{
+              bgcolor: "background.paper",
+              pt: 8,
+              pb: 6,
+            }}
+          >
+            <Container maxWidth="md">
+              <Typography
+                variant="h5"
+                align="center"
+                color="text.secondary"
+                paragraph
+              >
+                投稿一覧
+              </Typography>
+              <div>
+                <StyledCenter>
+                  <StyledImg src={break_cat_buti} alt="photo" />
+                </StyledCenter>
+              </div>
+              <Stack
+                sx={{ pt: 4 }}
+                direction="row"
+                spacing={2}
+                justifyContent="center"
+              >
+                <Button variant="contained">Main call to action</Button>
+                <Button variant="outlined">Secondary action</Button>
+              </Stack>
+            </Container>
+          </Box>
 
-        <Container sx={{ py: 8 }} maxWidth="md">
-          <Grid container spacing={4}>
-            {articles.map((article) => {
+          {/* カテゴリ一覧 */}
+          <StyledCenter>
+            {categories?.map((category, index) => {
               return (
-                <Grid item key={article.id} xs={12} sm={6} md={4}>
-                  <Card
-                    sx={{
-                      height: "100%",
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <CardMedia
-                      component="img"
-                      sx={{
-                        // 16:9
-                        pt: "56.25%",
-                      }}
-                      image={article.thumbnailUrl}
-                      alt="random"
-                    />
-                    <CardContent sx={{ flexGrow: 1 }}>
-                      <Typography gutterBottom variant="h5" component="h2">
-                        <Button>
-                          <NavLink to={"/posts/" + article.id}>
-                            {article.title}
-                          </NavLink>
-                        </Button>
-                      </Typography>
-                      <Typography>{article.content}</Typography>
-                    </CardContent>
-                    <CardActions>
-                      <Button size="small">View</Button>
-                      <Button size="small">Edit</Button>
-                    </CardActions>
-                  </Card>
-                </Grid>
+                <React.Fragment key={index}>
+                  <StyledCategories>{category.name}</StyledCategories>
+                  {index !== categories.length - 1 && " / "}
+                </React.Fragment>
               );
             })}
-          </Grid>
-        </Container>
-      </main>
-      {/* Footer */}
-      <Box sx={{ bgcolor: "background.paper", p: 6 }} component="footer">
-        <Typography variant="h6" align="center" gutterBottom>
-          Footer
-        </Typography>
-        <Typography
-          variant="subtitle1"
-          align="center"
-          color="text.secondary"
-          component="p"
-        >
-          Something here to give the footer a purpose!
-        </Typography>
-        <Copyright />
-      </Box>
+          </StyledCenter>
+
+          {/* タグ一覧 */}
+          <StyledCenter>
+            {tags?.map((tag) => {
+              return (
+                <StyledTags>
+                  <i className="fas fa-tag"></i>
+                  {tag.name}
+                </StyledTags>
+              );
+            })}
+          </StyledCenter>
+
+          {/*投稿一覧 */}
+          <StyledGridContainer>
+            {articles.map((article) => {
+              return (
+                <StyledItem key={article.id}>
+                  <StyledThumbnail src={article.thumbnailUrl} />
+                  <StyledTitle>{article.title}</StyledTitle>
+                  <StyledContent>{article.content}</StyledContent>
+                </StyledItem>
+              );
+            })}
+          </StyledGridContainer>
+
+          <Container sx={{ py: 8 }} maxWidth="md">
+            <Grid container spacing={4}>
+              {articles.map((article) => {
+                return (
+                  <Grid item key={article.id} xs={12} sm={6} md={4}>
+                    <Card
+                      sx={{
+                        height: "100%",
+                        display: "flex",
+                        flexDirection: "column",
+                      }}
+                    >
+                      <CardMedia
+                        component="img"
+                        sx={{
+                          // 16:9
+                          pt: "56.25%",
+                        }}
+                        image={article.thumbnailUrl}
+                        alt="random"
+                      />
+                      <CardContent sx={{ flexGrow: 1 }}>
+                        <Typography gutterBottom variant="h5" component="h2">
+                          <Button>
+                            <NavLink to={"/posts/" + article.id}>
+                              {article.title}
+                            </NavLink>
+                          </Button>
+                        </Typography>
+                        <Typography>{article.content}</Typography>
+                      </CardContent>
+                      <CardActions>
+                        <Button size="small">View</Button>
+                        <Button size="small">Edit</Button>
+                      </CardActions>
+                    </Card>
+                  </Grid>
+                );
+              })}
+            </Grid>
+          </Container>
+        </main>
+        {/* Footer */}
+        <Box sx={{ bgcolor: "background.paper", p: 6 }} component="footer">
+          <Typography variant="h6" align="center" gutterBottom>
+            Footer
+          </Typography>
+          <Typography
+            variant="subtitle1"
+            align="center"
+            color="text.secondary"
+            component="p"
+          >
+            Something here to give the footer a purpose!
+          </Typography>
+          <Copyright />
+        </Box>
+      </StyleContainer>
       {/* End footer */}
     </ThemeProvider>
   );

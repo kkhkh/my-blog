@@ -8,6 +8,7 @@ import Post from "./components/Post";
 import Chat from "./components/Chat";
 import GridLayout from "./components/GridLayout";
 import GridLayout2 from "./components/GridLayout2";
+import GridLayout3 from "./components/GridLayout3";
 import CreateArticle from "./components/CreateArticle";
 import useQueryFirebaseUser from "./hooks/useQueryFirebaseUser";
 
@@ -27,6 +28,7 @@ const Routing = () => {
         <Route path={"chat"} element={<Chat />} />
         <Route path={"grid"} element={<GridLayout />} />
         <Route path={"grid2"} element={<GridLayout2 />} />
+        <Route path={"grid3"} element={<GridLayout3 />} />
         {/* </Route> */}
       </Routes>
     </BrowserRouter>

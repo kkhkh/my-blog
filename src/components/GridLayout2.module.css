@@ -20,3 +20,11 @@
   justify-content: center;
   height: 100%;
 }
+.Card {
+  display: grid;
+  row-gap: 20px;
+}
+.Card_span {
+  align-self: end;
+  justify-self: end;
+}
