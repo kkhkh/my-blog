@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { styled, alpha } from "@mui/material/styles";
+import React, { useState, useEffect } from "react";
+import { styled as muiStyled, alpha } from "@mui/material/styles";
 import { NavLink } from "react-router-dom";
 import InputBase from "@mui/material/InputBase";
 import AppBar from "@mui/material/AppBar";
@@ -22,6 +22,8 @@ import SettingsAccessibilityIcon from "@mui/icons-material/SettingsAccessibility
 import SearchIcon from "@mui/icons-material/Search";
 import useQueryFirebaseUser from "../hooks/useQueryFirebaseUser";
 import axios from "axios";
+import styled from "styled-components";
+import break_cat_buti from "../assets/break-cat-buti.png";
 
 function Copyright() {
   return (
@@ -46,7 +48,35 @@ type article = {
   updatedAt: string;
 };
 
-const Search = styled("div")(({ theme }) => ({
+const StyledCategories = styled.div`
+  display: inline-block;
+  margin: 0 0.1em 0.6em 0;
+  padding: 0.6em;
+  line-height: 1;
+  text-decoration: none;
+  color: #0080ff;
+  text-align: center;
+`;
+
+const StyledCenter = styled.div`
+  text-align: center;
+`;
+
+const StyledTags = styled.div`
+  display: inline-block;
+  margin: 0 0.5em 0.6em 0;
+  padding: 0.6em;
+  line-height: 1;
+  text-decoration: none;
+  border: 1px solid #000000;
+  border-radius: 0.3em;
+`;
+
+const StyledImg = styled.img`
+  width: 180px;
+`;
+
+const Search = muiStyled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
   backgroundColor: alpha(theme.palette.common.white, 0.15),
@@ -61,7 +91,7 @@ const Search = styled("div")(({ theme }) => ({
   },
 }));
 
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
+const StyledInputBase = muiStyled(InputBase)(({ theme }) => ({
   color: "inherit",
   "& .MuiInputBase-input": {
     padding: theme.spacing(1, 1, 1, 0),
@@ -78,7 +108,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-const SearchIconWrapper = styled("div")(({ theme }) => ({
+const SearchIconWrapper = muiStyled("div")(({ theme }) => ({
   padding: theme.spacing(0, 2),
   height: "100%",
   position: "absolute",
@@ -92,34 +122,54 @@ const Posts = () => {
   const { fireBaseUser } = useQueryFirebaseUser();
 
   useEffect(() => {
-    (async () => {
-      axios
-        .get<article[]>("https://api-blog-dev.lightsail.ijcloud.jp/articles", {
-          headers: {
-            Authorization: "Bearer " + (await fireBaseUser?.getIdToken()),
-            accept: "application/json",
-          },
-        })
-        .then((response: any) => {
-          const articleList = response.data.articles.map((item: any) => ({
-            id: item.id,
-            title: item.title,
-            categoryId: item.categoryId,
-            content: item.content,
-            createAt: item.createAt,
-            thumbnailUrl: item.thumbnailUrl,
-            updatedAt: item.updateAt,
-          }));
-          console.log("response:");
-          console.log(response);
-          console.log(articleList);
-          setArticles(articleList);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    })();
+    getArticles();
   }, []);
+
+  const [tags, setTags] = useState([
+    {
+      createdAt: "2014-10-10T04:50:40.000Z",
+      name: "tag",
+      id: 0,
+      updatedAt: "2014-10-10T04:50:40.000Z",
+    },
+  ]);
+  const [categories, setCategories] = useState([
+    {
+      createdAt: "2014-10-10T04:50:40.000Z",
+      name: "categry",
+      id: 0,
+      updatedAt: "2014-10-10T04:50:40.000Z",
+    },
+  ]);
+
+  const getTags = async () => {
+    const getTagsResponse = await axios.get(
+      "https://api-blog-dev.lightsail.ijcloud.jp/tags"
+    );
+    console.log({ getTagsResponse });
+    setTags(getTagsResponse.data.tags);
+  };
+
+  const getCategories = async () => {
+    const getCategoriesResponse = await axios.get(
+      "https://api-blog-dev.lightsail.ijcloud.jp/categories",
+      {
+        headers: {
+          Authorization: "Bearer " + (await fireBaseUser?.getIdToken()),
+          accept: "application/json",
+        },
+      }
+    );
+    console.log("tags");
+    console.log({ getCategoriesResponse });
+    setCategories(getCategoriesResponse.data.categories);
+  };
+
+  const getArticles = async () => {
+    console.log(await fireBaseUser?.getIdToken());
+    const tagsInfo: any = await getTags();
+    const categoryInfo: any = await getCategories();
+  };
 
   const theme = createTheme();
   return (
@@ -175,6 +225,11 @@ const Posts = () => {
             >
               投稿一覧
             </Typography>
+            <div>
+              <StyledCenter>
+                <StyledImg src={break_cat_buti} alt="photo" />
+              </StyledCenter>
+            </div>
             <Stack
               sx={{ pt: 4 }}
               direction="row"
@@ -186,6 +241,28 @@ const Posts = () => {
             </Stack>
           </Container>
         </Box>
+        <StyledCenter>
+          {categories?.map((category, index) => {
+            return (
+              <React.Fragment key={index}>
+                <StyledCategories>{category.name}</StyledCategories>
+                {index !== categories.length - 1 && " / "}
+              </React.Fragment>
+            );
+            // return <StyledCategories>{category.name}</StyledCategories>;
+          })}
+        </StyledCenter>
+        <StyledCenter>
+          {tags?.map((tag) => {
+            return (
+              <StyledTags>
+                <i className="fas fa-tag"></i>
+                {tag.name}
+              </StyledTags>
+            );
+          })}
+        </StyledCenter>
+
         <Container sx={{ py: 8 }} maxWidth="md">
           <Grid container spacing={4}>
             {articles.map((article) => {

@@ -6,7 +6,7 @@ import Users from "./components/Users";
 import Posts from "./components/Posts";
 import Post from "./components/Post";
 import Chat from "./components/Chat";
-import Test from "./components/Test";
+import GridLayout from "./components/GridLayout";
 
 import CreateArticle from "./components/CreateArticle";
 import useQueryFirebaseUser from "./hooks/useQueryFirebaseUser";
@@ -16,7 +16,6 @@ const Routing = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path={"test"} element={<Test />} />
         <Route path={"/register/"} element={<Register />} />
         <Route path={"/login/"} element={<Login />} />
         {/* <Route path="/" element={<Layout />}> */}
@@ -26,6 +25,7 @@ const Routing = () => {
         <Route path={"posts/:postId"} element={<Post />} />
         <Route path={"createarticle"} element={<CreateArticle />} />
         <Route path={"chat"} element={<Chat />} />
+        <Route path={"grid"} element={<GridLayout />} />
         {/* </Route> */}
       </Routes>
     </BrowserRouter>

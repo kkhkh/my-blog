@@ -149,6 +149,7 @@ const CreateArticle = () => {
     const getTagsResponse = await axios.get(
       "https://api-blog-dev.lightsail.ijcloud.jp/tags"
     );
+    console.log("tags");
     console.log({ getTagsResponse });
     setTags(getTagsResponse.data.tags);
     setLoading(false);

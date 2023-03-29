@@ -18,12 +18,14 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import Avatar from "@mui/material/Avatar";
 import { makeStyles } from "@material-ui/core";
+import Markdown from "markdown-to-jsx";
+
 type article = {
   id: number;
   title: string;
   categoryId: number;
   content: string;
-  createAt: string;
+  createdAt: string;
   thumbnailUrl: string;
   updatedAt: string;
 };
@@ -135,7 +137,15 @@ const theme = createTheme();
 const Post = () => {
   const { fireBaseUser } = useQueryFirebaseUser();
   const { postId } = useParams();
-  const [article, setArticle] = useState<article>([]);
+  const [article, setArticle] = useState<article>({
+    id: 1,
+    title: "string",
+    categoryId: 0,
+    content: "string",
+    createdAt: "string",
+    thumbnailUrl: "string",
+    updatedAt: "string",
+  });
   const [category, seCategory] = useState<string>();
   const classes = useStyles();
 
@@ -247,7 +257,9 @@ const Post = () => {
               <p>ID: {postId}</p>
               <p>カテゴリー：{category}</p>
               <p>タイトル：{article.title}</p>
-              <p>本文：{article.content}</p>
+              <p>
+                本文： <Markdown children={article?.content ?? ""} />
+              </p>
               <img src={article.thumbnailUrl} alt="picture"></img>
             </div>
           </Container>
