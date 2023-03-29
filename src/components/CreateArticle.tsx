@@ -23,7 +23,8 @@ import useQueryFirebaseUser from "../hooks/useQueryFirebaseUser";
 
 const API_URL = "https://api.openai.com/v1/";
 const MODEL = "gpt-3.5-turbo";
-const API_KEY = "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";
+// const API_KEY = "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";
+const API_KEY = "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";
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: "inherit",

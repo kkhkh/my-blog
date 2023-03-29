@@ -6,7 +6,9 @@ import { auth } from "../FirebaseConfig";
 const useQueryFirebaseUser = () => {
   // queryClient
   const queryClient = useQueryClient();
-  useQuery<User | null>(["fireBaseUser"], () => null);
+  useQuery<User | null>(["fireBaseUser"], () => null, {
+    refetchOnWindowFocus: false,
+  });
 
   useEffect(() => {
     const unsubscribed = auth.onAuthStateChanged((user) => {
