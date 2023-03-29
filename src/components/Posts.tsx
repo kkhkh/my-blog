@@ -24,6 +24,7 @@ import useQueryFirebaseUser from "../hooks/useQueryFirebaseUser";
 import axios from "axios";
 import styled from "styled-components";
 import break_cat_buti from "../assets/break-cat-buti.png";
+import no_image from "../assets/no-image.png";
 
 function Copyright() {
   return (
@@ -93,7 +94,7 @@ const StyledGridContainer = styled.div`
   width: auto;
   height: auto;
   grid-template-columns: repeat(3, 1fr);
-  grid-auto-rows: 300px;
+  grid-auto-rows: 400px;
   gap: 10px 20px;
   margin: auto;
   margin-top: 50px;
@@ -102,6 +103,11 @@ const StyledGridContainer = styled.div`
 // 各グリッド
 const StyledItem = styled.div`
   border: 1px black solid;
+  &:hover {
+    cursor: pointer;
+    opacity: 0.6;
+    transition-duration: 0.3s;
+  }
 `;
 
 // 投稿タイトル
@@ -330,9 +336,17 @@ const Posts = () => {
             {articles.map((article) => {
               return (
                 <StyledItem key={article.id}>
-                  <StyledThumbnail src={article.thumbnailUrl} />
-                  <StyledTitle>{article.title}</StyledTitle>
-                  <StyledContent>{article.content}</StyledContent>
+                  <NavLink to={"/posts/" + article.id}>
+                    <StyledThumbnail
+                      src={
+                        article.thumbnailUrl !== "thumbnailUrl"
+                          ? `${article.thumbnailUrl}`
+                          : `${no_image}`
+                      }
+                    />
+                    <StyledTitle>{article.title}</StyledTitle>
+                    <StyledContent>{article.content}</StyledContent>
+                  </NavLink>
                 </StyledItem>
               );
             })}
