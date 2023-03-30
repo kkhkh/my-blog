@@ -201,32 +201,6 @@ const Post = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Box sx={{ flexGrow: 1 }}>
-        <AppBar>
-          <Container maxWidth="md">
-            <Toolbar>
-              <SettingsAccessibilityIcon sx={{ mr: 2 }} />
-              My Blog
-              <ButtonBase sx={{ ml: "auto" }}>
-                <Search>
-                  <SearchIconWrapper>
-                    <SearchIcon />
-                  </SearchIconWrapper>
-                  <StyledInputBase
-                    placeholder="Search…"
-                    inputProps={{ "aria-label": "search" }}
-                  />
-                </Search>
-                {fireBaseUser?.displayName ? (
-                  <Avatar {...stringAvatar(fireBaseUser.displayName || "")} />
-                ) : (
-                  <AccountCircleIcon />
-                )}
-              </ButtonBase>
-            </Toolbar>
-          </Container>
-        </AppBar>
-      </Box>
 
       <main>
         {/* Hero unit */}
@@ -237,20 +211,6 @@ const Post = () => {
             pb: 6,
           }}
         >
-          <ButtonGroup variant="text" aria-label="text button group">
-            <Button>
-              <NavLink to="/">ホーム</NavLink>
-            </Button>
-            <Button>
-              <NavLink to="/users">ユーザー一覧</NavLink>
-            </Button>
-            <Button>
-              <NavLink to="/posts">記事一覧</NavLink>
-            </Button>
-            <Button>
-              <NavLink to={"/createarticle/"}>投稿</NavLink>
-            </Button>
-          </ButtonGroup>
           <Container maxWidth="md">
             <div>
               <h2>記事詳細</h2>

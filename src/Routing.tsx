@@ -6,31 +6,30 @@ import Users from "./components/Users";
 import Posts from "./components/Posts";
 import Post from "./components/Post";
 import Chat from "./components/Chat";
-import GridLayout from "./components/GridLayout";
-import GridLayout2 from "./components/GridLayout2";
-import GridLayout3 from "./components/GridLayout3";
 import CreateArticle from "./components/CreateArticle";
 import useQueryFirebaseUser from "./hooks/useQueryFirebaseUser";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
 
 const Routing = () => {
   const { fireBaseUser } = useQueryFirebaseUser();
   return (
     <BrowserRouter>
+      <Header />
       <Routes>
         <Route path={"/register/"} element={<Register />} />
         <Route path={"/login/"} element={<Login />} />
+
         {/* <Route path="/" element={<Layout />}> */}
         <Route index element={<Home />} />
+
         <Route path={"/users/"} element={<Users />} />
         <Route path={"/posts"} element={<Posts />} />
         <Route path={"posts/:postId"} element={<Post />} />
         <Route path={"createarticle"} element={<CreateArticle />} />
         <Route path={"chat"} element={<Chat />} />
-        <Route path={"grid"} element={<GridLayout />} />
-        <Route path={"grid2"} element={<GridLayout2 />} />
-        <Route path={"grid3"} element={<GridLayout3 />} />
-        {/* </Route> */}
       </Routes>
+      <Footer />
     </BrowserRouter>
   );
 };

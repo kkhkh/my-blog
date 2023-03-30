@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { User } from "firebase/auth";
-import { useEffect, useContext } from "react";
+import { useEffect } from "react";
 import { auth } from "../FirebaseConfig";
 
 const useQueryFirebaseUser = () => {

@@ -21,18 +21,7 @@ import ButtonBase from "@mui/material/ButtonBase";
 import useQueryFirebaseUser from "../hooks/useQueryFirebaseUser";
 import { makeStyles } from "@material-ui/core";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-// function Copyright() {
-//   return (
-//     <Typography variant="body2" color="text.secondary" align="center">
-//       {"Copyright © "}
-//       <Link color="inherit" href="https://mui.com/">
-//         Your Website
-//       </Link>{" "}
-//       {new Date().getFullYear()}
-//       {"."}
-//     </Typography>
-//   );
-// }
+
 const useStyles = makeStyles((theme) => ({
   root: {
     height: "100vh",
@@ -162,36 +151,6 @@ const Home = () => {
       ) : (
         <>
           <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <Box sx={{ flexGrow: 1 }}>
-              <AppBar>
-                <Container maxWidth="md">
-                  <Toolbar>
-                    <SettingsAccessibilityIcon sx={{ mr: 2 }} />
-                    My Blog
-                    <ButtonBase sx={{ ml: "auto" }}>
-                      <Search>
-                        <SearchIconWrapper>
-                          <SearchIcon />
-                        </SearchIconWrapper>
-                        <StyledInputBase
-                          placeholder="Search…"
-                          inputProps={{ "aria-label": "search" }}
-                        />
-                      </Search>
-                      {fireBaseUser.displayName ? (
-                        <Avatar
-                          {...stringAvatar(fireBaseUser.displayName || "")}
-                        />
-                      ) : (
-                        <AccountCircleIcon />
-                      )}
-                    </ButtonBase>
-                  </Toolbar>
-                </Container>
-              </AppBar>
-            </Box>
-
             <main>
               {/* Hero unit */}
               <Box
