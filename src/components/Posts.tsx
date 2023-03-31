@@ -2,18 +2,12 @@ import React, { useState, useEffect } from "react";
 import { styled as muiStyled, alpha } from "@mui/material/styles";
 import { NavLink, Link } from "react-router-dom";
 import InputBase from "@mui/material/InputBase";
-import AppBar from "@mui/material/AppBar";
 import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import ButtonGroup from "@mui/material/ButtonGroup";
-import SettingsAccessibilityIcon from "@mui/icons-material/SettingsAccessibility";
-import SearchIcon from "@mui/icons-material/Search";
 import useQueryFirebaseUser from "../hooks/useQueryFirebaseUser";
 import axios from "axios";
 import styled from "styled-components";
@@ -31,7 +25,7 @@ type article = {
 };
 
 // ページ全体
-const StyleContainer = styled.div`
+const StyledContainer = styled.div`
   width: 1000px;
   margin: auto;
 `;
@@ -109,47 +103,6 @@ const StyledThumbnail = styled.img`
   width: 100%;
 `;
 
-const Search = muiStyled("div")(({ theme }) => ({
-  position: "relative",
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  "&:hover": {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
-  marginLeft: 0,
-  width: "100%",
-  [theme.breakpoints.up("sm")]: {
-    marginLeft: theme.spacing(1),
-    width: "auto",
-  },
-}));
-
-const StyledInputBase = muiStyled(InputBase)(({ theme }) => ({
-  color: "inherit",
-  "& .MuiInputBase-input": {
-    padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    [theme.breakpoints.up("sm")]: {
-      width: "12ch",
-      "&:focus": {
-        width: "20ch",
-      },
-    },
-  },
-}));
-
-const SearchIconWrapper = muiStyled("div")(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: "100%",
-  position: "absolute",
-  pointerEvents: "none",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-}));
 const Posts = () => {
   const [articles, setArticles] = useState<article[]>([]);
   const { fireBaseUser } = useQueryFirebaseUser();
@@ -221,7 +174,7 @@ const Posts = () => {
   const theme = createTheme();
   return (
     <ThemeProvider theme={theme}>
-      <StyleContainer>
+      <StyledContainer>
         <main>
           {/* Hero unit */}
           <Box
@@ -302,7 +255,7 @@ const Posts = () => {
             })}
           </StyledGridContainer>
         </main>
-      </StyleContainer>
+      </StyledContainer>
     </ThemeProvider>
   );
 };

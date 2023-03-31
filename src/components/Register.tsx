@@ -1,47 +1,90 @@
 import React, { useState, useEffect } from "react";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
   User,
 } from "firebase/auth";
 import { auth } from "../FirebaseConfig";
-import { Navigate, Link as ReactLink } from "react-router-dom";
+import { Navigate, NavLink } from "react-router-dom";
 import axios from "axios";
 import useQueryFirebaseUser from "../hooks/useQueryFirebaseUser";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import styled from "styled-components";
+import Container from "@material-ui/core/Container";
+import CssBaseline from "@material-ui/core/CssBaseline";
 
-function Copyright(props: any) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
+const StyledSignUpForm = styled.div`
+  background: #fafafa;
+  margin: 3em auto;
+  padding: 0 1em;
+  max-width: 370px;
+  h1 {
+    text-align: center;
+    padding: 1em 0;
+  }
+  form {
+    padding: 0 1.5em;
+  }
+`;
 
-const theme = createTheme();
+const StyledSignUpFormItem = styled.div`
+  margin-bottom: 0.75em;
+  width: 100%;
+`;
+
+const StyledSignUpInput = styled.input.attrs({ required: true })`
+  background: #fafafa;
+  border: none;
+  border-bottom: 2px solid #e9e9e9;
+  color: #666;
+  font-family: "Open Sans", sans-serif;
+  font-size: 1em;
+  height: 50px;
+  transition: border-color 0.3s;
+  width: 100%;
+
+  &:focus {
+    border-bottom: 2px solid #c0c0c0;
+    outline: none;
+  }
+`;
+
+const StyledSignUpButtonPanel = styled.div`
+  margin: 2em 0 0;
+  width: 100%;
+`;
+
+const StyledSignUpButtonPanelButton = styled.input`
+  background: #eb838f;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  height: 50px;
+  font-family: "Open Sans", sans-serif;
+  font-size: 1.2em;
+  letter-spacing: 0.05em;
+  text-align: center;
+  text-transform: uppercase;
+  transition: background 0.3s ease-in-out;
+  width: 100%;
+  &:hover {
+    background: #dd6d7a;
+  }
+`;
+
+const StyledSignUpFooter = styled.div`
+  font-size: 1em;
+  padding: 2em 0;
+  text-align: center;
+  a {
+    color: #8c8c8c;
+    text-decoration: none;
+    transition: border-color 0.3s;
+    &:hover {
+      border-bottom: 1px dotted #8c8c8c;
+    }
+  }
+`;
 
 const Register = () => {
   const [userName, setUserName] = useState("");
@@ -103,118 +146,47 @@ const Register = () => {
         <Navigate to={"/"} />
       ) : (
         <>
-          <ThemeProvider theme={theme}>
-            <Container component="main" maxWidth="xs">
-              <CssBaseline />
-              <Box
-                sx={{
-                  marginTop: 8,
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                }}
-              >
-                <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-                  <LockOpenOutlinedIcon />
-                </Avatar>
-                <Typography component="h1" variant="h5">
-                  新規登録
-                </Typography>
-                <Box
-                  component="form"
-                  onSubmit={handleSubmit}
-                  noValidate
-                  sx={{ mt: 1 }}
-                >
-                  {/* <TextField
-                    margin="normal"
-                    required
-                    fullWidth
-                    id="username"
-                    label="User Name"
-                    name="username"
-                    autoComplete="username"
-                    autoFocus
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                  /> */}
-                  {/* <input
-                    type="text"
-                    required
-                    id="email"
-                    name="email"
-                    defaultValue={signupEmail} */}
-                  {/* // onChange={(e) => setSignupEmail(e.target.value)} */}
-                  {/* /> */}
-                  {/* <TextField
-                    id="outlined-controlled"
-                    label="Controlled"
-                    value={name}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      setSignupEmail(event.target.value);
-                    }}
-                  />
-                  <TextField
-                    id="outlined-uncontrolled"
-                    label="Uncontrolled"
-                    defaultValue="foo"
-                  /> */}
-                  <TextField
-                    margin="normal"
-                    required
-                    fullWidth
-                    id="username"
-                    label="User Name"
-                    name="username"
-                    autoComplete="username"
-                    autoFocus
-                    value={userName}
-                    onChange={(e) => setUserName(e.target.value)}
-                  />
-                  <TextField
-                    margin="normal"
-                    required
-                    fullWidth
-                    id="email"
-                    label="Email Address"
-                    name="email"
-                    autoComplete="email"
-                    autoFocus
-                    value={signupEmail}
-                    onChange={(e) => setSignupEmail(e.target.value)}
-                  />
-                  <TextField
-                    margin="normal"
-                    required
-                    fullWidth
-                    name="password"
-                    label="Password"
-                    type="password"
-                    id="password"
-                    autoComplete="current-password"
-                    value={signupPassword}
-                    onChange={(e) => setSignupPassword(e.target.value)}
-                  />
-                  <FormControlLabel
-                    control={<Checkbox value="remember" color="primary" />}
-                    label="Remember me"
-                  />
-                  <Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                    sx={{ mt: 3, mb: 2 }}
-                  >
-                    新規登録
-                  </Button>
-                  <p>
-                    ログインは<ReactLink to={"/login/"}>こちら</ReactLink>
-                  </p>
-                </Box>
-              </Box>
-              <Copyright sx={{ mt: 8, mb: 4 }} />
-            </Container>
-          </ThemeProvider>
+          <StyledSignUpForm>
+            <h1>SignUp</h1>
+            <form>
+              <StyledSignUpFormItem>
+                <label htmlFor="email"></label>
+                <StyledSignUpInput
+                  type="email"
+                  name="email"
+                  placeholder="Email Address"
+                  value={signupEmail}
+                  onChange={(e) => setSignupEmail(e.target.value)}
+                ></StyledSignUpInput>
+              </StyledSignUpFormItem>
+              <StyledSignUpFormItem>
+                <label htmlFor="password"></label>
+                <StyledSignUpInput
+                  type="password"
+                  name="password"
+                  placeholder="Password"
+                  value={signupEmail}
+                  onChange={(e) => setSignupPassword(e.target.value)}
+                ></StyledSignUpInput>
+              </StyledSignUpFormItem>
+              <StyledSignUpButtonPanel>
+                <StyledSignUpButtonPanelButton
+                  type="submit"
+                  title="Sign Up"
+                  value="Sign Up"
+                  onClick={handleSubmit}
+                ></StyledSignUpButtonPanelButton>
+              </StyledSignUpButtonPanel>
+            </form>
+            <StyledSignUpFooter>
+              <p>
+                <NavLink to="/login/">
+                  Already have login and password? Sign in
+                </NavLink>
+              </p>
+            </StyledSignUpFooter>
+          </StyledSignUpForm>
+          <CssBaseline />
         </>
       )}
       ;

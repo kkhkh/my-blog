@@ -19,10 +19,7 @@ const Routing = () => {
       <Routes>
         <Route path={"/register/"} element={<Register />} />
         <Route path={"/login/"} element={<Login />} />
-
-        {/* <Route path="/" element={<Layout />}> */}
         <Route index element={<Home />} />
-
         <Route path={"/users/"} element={<Users />} />
         <Route path={"/posts"} element={<Posts />} />
         <Route path={"posts/:postId"} element={<Post />} />

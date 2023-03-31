@@ -1,22 +1,18 @@
 import React, { useState, useEffect } from "react";
-import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
-import Link from "@material-ui/core/Link";
-import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import CameraIcon from "@material-ui/icons/Camera";
 import IconButton from "@material-ui/core/IconButton";
 import SendIcon from "@material-ui/icons/Send";
-import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import { makeStyles } from "@material-ui/core/styles";
 import CloseIcon from "@mui/icons-material/Close";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import styled from "styled-components";
 
 import {
   signInWithEmailAndPassword,
@@ -26,20 +22,8 @@ import {
 } from "firebase/auth";
 import { auth, provider } from "../FirebaseConfig";
 
-import { Navigate, Link as ReactLink } from "react-router-dom";
+import { Navigate, NavLink } from "react-router-dom";
 import Modal from "react-modal";
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -73,6 +57,79 @@ const customStyles = {
   },
 };
 
+const StyledLoginForm = styled.div`
+  background: #fafafa;
+  margin: 3em auto;
+  padding: 0 1em;
+  max-width: 370px;
+  h1 {
+    text-align: center;
+    padding: 1em 0;
+  }
+  form {
+    padding: 0 1.5em;
+  }
+`;
+
+const StyledLoginFormItem = styled.div`
+  margin-bottom: 0.75em;
+  width: 100%;
+`;
+
+const StyledLoginInput = styled.input.attrs({ required: true })`
+  background: #fafafa;
+  border: none;
+  border-bottom: 2px solid #e9e9e9;
+  color: #666;
+  font-family: "Open Sans", sans-serif;
+  font-size: 1em;
+  height: 50px;
+  transition: border-color 0.3s;
+  width: 100%;
+
+  &:focus {
+    border-bottom: 2px solid #c0c0c0;
+    outline: none;
+  }
+`;
+
+const StyledLoginButtonPanel = styled.div`
+  margin: 2em 0 0;
+  width: 100%;
+`;
+
+const StyledLoginButtonPanelButton = styled.input`
+  background: #eb838f;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  height: 50px;
+  font-family: "Open Sans", sans-serif;
+  font-size: 1.2em;
+  letter-spacing: 0.05em;
+  text-align: center;
+  text-transform: uppercase;
+  transition: background 0.3s ease-in-out;
+  width: 100%;
+  &:hover {
+    background: #dd6d7a;
+  }
+`;
+
+const StyledLoginFooter = styled.div`
+  font-size: 1em;
+  padding: 2em 0;
+  text-align: center;
+  a {
+    color: #8c8c8c;
+    text-decoration: none;
+    transition: border-color 0.3s;
+    &:hover {
+      border-bottom: 1px dotted #8c8c8c;
+    }
+  }
+`;
+
 const Login = () => {
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
@@ -99,6 +156,7 @@ const Login = () => {
     await signInWithEmailAndPassword(auth, loginEmail, loginPassword)
       .then((userCredential) => {
         queryClient.setQueryData(["fireBaseUser"], userCredential);
+        console.log("IdToken");
         console.log(userCredential.user.getIdToken());
       })
       .catch((error) => alert(error.message));
@@ -126,70 +184,58 @@ const Login = () => {
         <Navigate to={"/"} />
       ) : (
         <>
+          <StyledLoginForm>
+            <h1>Sign In</h1>
+            <form>
+              <StyledLoginFormItem>
+                <label htmlFor="email"></label>
+                <StyledLoginInput
+                  type="email"
+                  name="email"
+                  placeholder="Email Address"
+                  value={loginEmail}
+                  onChange={(e) => setLoginEmail(e.target.value)}
+                ></StyledLoginInput>
+              </StyledLoginFormItem>
+              <StyledLoginFormItem>
+                <label htmlFor="password"></label>
+                <StyledLoginInput
+                  type="password"
+                  name="password"
+                  placeholder="Password"
+                  value={loginEmail}
+                  onChange={(e) => setLoginPassword(e.target.value)}
+                ></StyledLoginInput>
+              </StyledLoginFormItem>
+              <StyledLoginButtonPanel>
+                <StyledLoginButtonPanelButton
+                  type="submit"
+                  title="Sign In"
+                  value="Sign In"
+                  onClick={handleSubmit}
+                ></StyledLoginButtonPanelButton>
+              </StyledLoginButtonPanel>
+            </form>
+            <StyledLoginFooter>
+              <p>
+                <NavLink to="/register/">Create an account</NavLink>
+              </p>
+              <p>
+                <a href="#" onClick={() => setOpenModal(true)}>
+                  Forgot password?
+                </a>
+              </p>
+            </StyledLoginFooter>
+          </StyledLoginForm>
+
           <Container component="main" maxWidth="xs">
             <CssBaseline />
             <div className={classes.paper}>
-              <Avatar className={classes.avatar}>
-                <LockOutlinedIcon />
-              </Avatar>
-              <Typography component="h1" variant="h5">
-                ログイン
-              </Typography>
               <form className={classes.form} noValidate onSubmit={handleSubmit}>
-                <TextField
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="email"
-                  label="Email Address"
-                  name="email"
-                  autoComplete="email"
-                  autoFocus
-                  value={loginEmail}
-                  onChange={(e) => setLoginEmail(e.target.value)}
-                />
-                <TextField
-                  margin="normal"
-                  required
-                  fullWidth
-                  name="password"
-                  label="Password"
-                  type="password"
-                  id="password"
-                  autoComplete="current-password"
-                  value={loginPassword}
-                  onChange={(e) => setLoginPassword(e.target.value)}
-                />
                 <FormControlLabel
                   control={<Checkbox value="remember" color="primary" />}
                   label="Remember me"
                 />
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  className={classes.submit}
-                >
-                  ログイン
-                </Button>
-
-                <Grid container>
-                  <Grid item xs>
-                    <Link
-                      onClick={() => setOpenModal(true)}
-                      href="#"
-                      variant="body2"
-                    >
-                      パスワードリセット
-                    </Link>
-                  </Grid>
-
-                  <Grid item xs>
-                    新規登録は
-                    <ReactLink to={"/register/"}>こちら</ReactLink>
-                  </Grid>
-                </Grid>
 
                 <Button
                   type="submit"
@@ -225,10 +271,6 @@ const Login = () => {
                 </Modal>
               </form>
             </div>
-
-            <Box mt={8}>
-              <Copyright />
-            </Box>
           </Container>
         </>
       )}

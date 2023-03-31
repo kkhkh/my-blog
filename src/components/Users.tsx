@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { styled, alpha } from "@mui/material/styles";
+import { alpha } from "@mui/material/styles";
 import { NavLink } from "react-router-dom";
 import InputBase from "@mui/material/InputBase";
 import AppBar from "@mui/material/AppBar";
@@ -28,6 +28,7 @@ import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import useQueryFirebaseUser from "../hooks/useQueryFirebaseUser";
 import axios from "axios";
+import styled from "styled-components";
 
 function Copyright() {
   return (
@@ -51,47 +52,29 @@ type user = {
   updatedAt: string;
 };
 
-const Search = styled("div")(({ theme }) => ({
-  position: "relative",
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  "&:hover": {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
-  marginLeft: 0,
-  width: "100%",
-  [theme.breakpoints.up("sm")]: {
-    marginLeft: theme.spacing(1),
-    width: "auto",
-  },
-}));
+const StyledContainer = styled.div`
+  width: 1000px;
+  margin: auto;
+`;
 
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: "inherit",
-  "& .MuiInputBase-input": {
-    padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    [theme.breakpoints.up("sm")]: {
-      width: "12ch",
-      "&:focus": {
-        width: "20ch",
-      },
-    },
-  },
-}));
-
-const SearchIconWrapper = styled("div")(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: "100%",
-  position: "absolute",
-  pointerEvents: "none",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-}));
+const StyledTable = styled.table`
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+  table-layout: auto;
+  tr {
+    border-bottom: solid 1px #eee;
+    cursor: pointer;
+    &:hover {
+      background-color: #d4f0fd;
+    }
+  }
+  th,
+  td {
+    text-align: center;
+    padding: 15px 0;
+  }
+`;
 
 function stringToColor(string: string) {
   let hash = 0;
@@ -128,6 +111,7 @@ const Users = () => {
 
   useEffect(() => {
     (async () => {
+      console.log("Users");
       console.log(await fireBaseUser?.getIdToken());
       axios
         .get<user[]>("https://api-blog-dev.lightsail.ijcloud.jp/admin/users", {
@@ -160,40 +144,7 @@ const Users = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      {/* <AppBar position="relative"> */}
-      <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="static">
-          <Toolbar>
-            <SettingsAccessibilityIcon sx={{ mr: 2 }} />
-            <Typography variant="h6" color="inherit" noWrap></Typography>
-            <Search>
-              <SearchIconWrapper>
-                <SearchIcon />
-              </SearchIconWrapper>
-              <StyledInputBase
-                placeholder="Search…"
-                inputProps={{ "aria-label": "search" }}
-              />
-            </Search>
-          </Toolbar>
-        </AppBar>
-      </Box>
-      <ButtonGroup variant="text" aria-label="text button group">
-        <Button>
-          <NavLink to="/">ホーム</NavLink>
-        </Button>
-        <Button>
-          <NavLink to="/users">ユーザー一覧</NavLink>
-        </Button>
-        <Button>
-          <NavLink to="/posts">記事一覧</NavLink>
-        </Button>
-        <Button>
-          <NavLink to={"/createarticle/"}>投稿</NavLink>
-        </Button>
-      </ButtonGroup>
-      <main>
-        {/* Hero unit */}
+      <StyledContainer>
         <Box
           sx={{
             bgcolor: "background.paper",
@@ -221,58 +172,32 @@ const Users = () => {
             </Stack>
           </Container>
         </Box>
-        {/* <Container sx={{ py: 8 }} maxWidth="md">
-          <Grid container spacing={4}> */}
-        <List
-          sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
-        >
+
+        <StyledTable>
+          <tr>
+            <th></th>
+            <th>ユーザー名</th>
+            <th>メールアドレス</th>
+            <th>権限</th>
+            <th>登録日</th>
+          </tr>
+
           {users.map((user) => {
             return (
-              <>
-                <ListItem alignItems="flex-start">
-                  <ListItemAvatar>
-                    <Avatar {...stringAvatar(user.name || "")} />
-                    <ListItemText
-                      primary={user.name}
-                      secondary={
-                        <React.Fragment>
-                          <Typography
-                            sx={{ display: "inline" }}
-                            component="span"
-                            variant="body2"
-                            color="text.primary"
-                          >
-                            {user.email}
-                          </Typography>
-                        </React.Fragment>
-                      }
-                    />
-                  </ListItemAvatar>
-                </ListItem>
-                <Divider variant="inset" component="li" />
-              </>
+              <tr>
+                <td>
+                  {" "}
+                  <Avatar {...stringAvatar(user.name || "")} />
+                </td>
+                <td>{user.name}</td>
+                <td>{user.email}</td>
+                <td>{user.role}</td>
+                <td>{user.createdAt}</td>
+              </tr>
             );
           })}
-        </List>
-        {/* </Grid>
-        </Container> */}
-      </main>
-      {/* Footer */}
-      <Box sx={{ bgcolor: "background.paper", p: 6 }} component="footer">
-        <Typography variant="h6" align="center" gutterBottom>
-          Footer
-        </Typography>
-        <Typography
-          variant="subtitle1"
-          align="center"
-          color="text.secondary"
-          component="p"
-        >
-          Something here to give the footer a purpose!
-        </Typography>
-        <Copyright />
-      </Box>
-      {/* End footer */}
+        </StyledTable>
+      </StyledContainer>
     </ThemeProvider>
   );
 };
