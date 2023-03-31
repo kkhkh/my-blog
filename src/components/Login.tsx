@@ -203,7 +203,7 @@ const Login = () => {
                   type="password"
                   name="password"
                   placeholder="Password"
-                  value={loginEmail}
+                  value={loginPassword}
                   onChange={(e) => setLoginPassword(e.target.value)}
                 ></StyledLoginInput>
               </StyledLoginFormItem>

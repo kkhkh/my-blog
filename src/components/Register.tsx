@@ -165,7 +165,7 @@ const Register = () => {
                   type="password"
                   name="password"
                   placeholder="Password"
-                  value={signupEmail}
+                  value={signupPassword}
                   onChange={(e) => setSignupPassword(e.target.value)}
                 ></StyledSignUpInput>
               </StyledSignUpFormItem>
