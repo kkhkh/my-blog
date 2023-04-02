@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { styled as muiStyled, alpha } from "@mui/material/styles";
 import { NavLink, Link } from "react-router-dom";
-import InputBase from "@mui/material/InputBase";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";

@@ -1,24 +1,10 @@
 import { useState, useEffect } from "react";
 import { useParams, NavLink } from "react-router-dom";
 import axios from "axios";
-import { styled, alpha } from "@mui/material/styles";
 import useQueryFirebaseUser from "../hooks/useQueryFirebaseUser";
-import InputBase from "@mui/material/InputBase";
-import AppBar from "@mui/material/AppBar";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import SettingsAccessibilityIcon from "@mui/icons-material/SettingsAccessibility";
-import Container from "@mui/material/Container";
-import ButtonGroup from "@mui/material/ButtonGroup";
-import SearchIcon from "@mui/icons-material/Search";
-import ButtonBase from "@mui/material/ButtonBase";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import Avatar from "@mui/material/Avatar";
-import { makeStyles } from "@material-ui/core";
 import Markdown from "markdown-to-jsx";
+import styled from "styled-components";
+import no_image from "../assets/no-image.png";
 
 type article = {
   id: number;
@@ -29,111 +15,39 @@ type article = {
   thumbnailUrl: string;
   updatedAt: string;
 };
-const useStyles = makeStyles((theme) => ({
-  root: {
-    height: "100vh",
-  },
-  image: {
-    backgroundImage:
-      "url(https://images.unsplash.com/photo-1567225591450-06036b3392a6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8OHx8JUU2JTlGJUI0JUU3JThBJUFDfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60)",
-    backgroundRepeat: "no-repeat",
-    backgroundColor:
-      theme.palette.type === "light"
-        ? theme.palette.grey[50]
-        : theme.palette.grey[900],
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-  },
-  paper: {
-    margin: theme.spacing(8, 4),
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
-  },
-  form: {
-    width: "100%", // Fix IE 11 issue.
-    marginTop: theme.spacing(1),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-}));
 
-const Search = styled("div")(({ theme }) => ({
-  position: "relative",
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  "&:hover": {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
-  marginLeft: 0,
-  width: "100%",
-  [theme.breakpoints.up("sm")]: {
-    marginLeft: theme.spacing(1),
-    width: "auto",
-  },
-}));
+// ページ全体
+const StyledContainer = styled.div`
+  width: 1000px;
+  margin: auto;
+`;
 
-const SearchIconWrapper = styled("div")(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: "100%",
-  position: "absolute",
-  pointerEvents: "none",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-}));
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: "inherit",
-  "& .MuiInputBase-input": {
-    padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    [theme.breakpoints.up("sm")]: {
-      width: "12ch",
-      "&:focus": {
-        width: "20ch",
-      },
-    },
-  },
-}));
+// グリッド全体
+const StyledGridContainer = styled.div`
+  display: grid;
+  margin-top: 20px;
+  grid-template-columns: 2fr 1fr;
+  grid-gap: 20px;
 
-function stringToColor(string: string) {
-  let hash = 0;
-  let i;
-
-  /* eslint-disable no-bitwise */
-  for (i = 0; i < string.length; i += 1) {
-    hash = string.charCodeAt(i) + ((hash << 5) - hash);
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
   }
+`;
 
-  let color = "#";
+// ボディ
+const StyledBody = styled.div`
+  background-color: #fff;
+  grid-column: 1 / 2;
+  padding: 20px;
+`;
 
-  for (i = 0; i < 3; i += 1) {
-    const value = (hash >> (i * 8)) & 0xff;
-    color += `00${value.toString(16)}`.slice(-2);
-  }
-  /* eslint-enable no-bitwise */
+// サイドバー
+const StyledSidebar = styled.div`
+  background-color: #f2f2f2;
+  grid-column: 2 / 3;
+  padding: 20px;
+`;
 
-  return color;
-}
-
-function stringAvatar(name: string) {
-  return {
-    sx: {
-      bgcolor: stringToColor(name),
-    },
-    children: `${name.charAt(0)}`,
-  };
-}
-
-const theme = createTheme();
 const Post = () => {
   const { fireBaseUser } = useQueryFirebaseUser();
   const { postId } = useParams();
@@ -147,7 +61,6 @@ const Post = () => {
     updatedAt: "string",
   });
   const [category, seCategory] = useState<string>();
-  const classes = useStyles();
 
   useEffect(() => {
     getArticleAllInfo();
@@ -199,34 +112,37 @@ const Post = () => {
     return response;
   };
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
+    <StyledContainer>
+      <StyledGridContainer>
+        <StyledBody>
+          <h2>{article.title}</h2>
+          <h3>
+            {new Date(article.createdAt).toLocaleDateString("ja-JP", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+          </h3>
+          <p>ID: {postId}</p>
+          <p>カテゴリー：{category}</p>
 
-      <main>
-        {/* Hero unit */}
-        <Box
-          sx={{
-            bgcolor: "background.paper",
-            pt: 8,
-            pb: 6,
-          }}
-        >
-          <Container maxWidth="md">
-            <div>
-              <h2>記事詳細</h2>
-              <p>ID: {postId}</p>
-              <p>カテゴリー：{category}</p>
-              <p>タイトル：{article.title}</p>
-              <p>
-                本文： <Markdown children={article?.content ?? ""} />
-              </p>
-              <img src={article.thumbnailUrl} alt="picture"></img>
-            </div>
-          </Container>
-        </Box>
-        <Container sx={{ py: 8 }} maxWidth="md"></Container>
-      </main>
-    </ThemeProvider>
+          <p>
+            本文： <Markdown children={article?.content ?? ""} />
+          </p>
+          <img
+            src={
+              article.thumbnailUrl !== "thumbnailUrl"
+                ? `${article.thumbnailUrl}`
+                : `${no_image}`
+            }
+          ></img>
+        </StyledBody>
+
+        <StyledSidebar>
+          {/* ここにサイドバーのコンテンツを追加 */}
+        </StyledSidebar>
+      </StyledGridContainer>
+    </StyledContainer>
   );
 };
 

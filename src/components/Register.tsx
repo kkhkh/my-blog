@@ -150,6 +150,16 @@ const Register = () => {
             <h1>SignUp</h1>
             <form>
               <StyledSignUpFormItem>
+                <label htmlFor="username"></label>
+                <StyledSignUpInput
+                  type="test"
+                  name="username"
+                  placeholder="username"
+                  value={userName}
+                  onChange={(e) => setUserName(e.target.value)}
+                ></StyledSignUpInput>
+              </StyledSignUpFormItem>
+              <StyledSignUpFormItem>
                 <label htmlFor="email"></label>
                 <StyledSignUpInput
                   type="email"

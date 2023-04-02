@@ -160,20 +160,6 @@ const Home = () => {
                   pb: 6,
                 }}
               >
-                <ButtonGroup variant="text" aria-label="text button group">
-                  <Button>
-                    <NavLink to="/">ホーム</NavLink>
-                  </Button>
-                  <Button>
-                    <NavLink to="/users">ユーザー一覧</NavLink>
-                  </Button>
-                  <Button>
-                    <NavLink to="/posts">記事一覧</NavLink>
-                  </Button>
-                  <Button>
-                    <NavLink to={"/createarticle/"}>投稿</NavLink>
-                  </Button>
-                </ButtonGroup>
                 <Container maxWidth="md">
                   <Typography
                     component="h1"

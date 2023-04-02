@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import SearchIcon from "@material-ui/icons/Search";
-import Avatar from "boring-avatars";
+// import {Avatar as Bavatar} from "boring-avatars";
+import Avatar from "@mui/material/Avatar";
 import my_blog_cat_buti from "../assets/my_blog_cat_buti.png";
 import { NavLink } from "react-router-dom";
 import useQueryFirebaseUser from "../hooks/useQueryFirebaseUser";
@@ -116,7 +117,6 @@ const StyledHeaderRightObject = styled.div`
     cursor: pointer;
     color: white;
     font-size: 15px;
-    margin-right: 5px;
   }
   @media screen and (max-width: 757px) {
     display: none;
@@ -246,20 +246,21 @@ const Header = () => {
         </StyledHeaderRightObject>
         <StyledHeaderRightObject>
           {!fireBaseUser || !fireBaseUser.displayName ? (
-            <Avatar
-              size={40}
-              name="Mary Baker"
-              variant="beam"
-              colors={["#FDF1CC", "#C6D6B8", "#987F69", "#E3AD40", "#FCD036"]}
-            />
+            // <Bavatar
+            //   size={40}
+            //   name="Mary Baker"
+            //   variant="beam"
+            //   colors={["#FDF1CC", "#C6D6B8", "#987F69", "#E3AD40", "#FCD036"]}
+            // />
+            <Avatar />
           ) : (
-            // <Avatar {...stringAvatar(fireBaseUser.displayName || "")} />
-            <Avatar
-              size={40}
-              name="Willa Cather"
-              variant="beam"
-              colors={["#FDF1CC", "#C6D6B8", "#987F69", "#E3AD40", "#FCD036"]}
-            />
+            <Avatar {...stringAvatar(fireBaseUser.displayName || "")} />
+            // <Avatar
+            //   size={40}
+            //   name="Willa Cather"
+            //   variant="beam"
+            //   colors={["#FDF1CC", "#C6D6B8", "#987F69", "#E3AD40", "#FCD036"]}
+            // />
           )}
         </StyledHeaderRightObject>
       </StyledHeaderRight>
