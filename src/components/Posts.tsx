@@ -240,6 +240,7 @@ const Posts = () => {
                       categoriesName: categories.map(
                         (category) => category.name
                       ),
+                      tagsName: tags.map((tag) => tag.name),
                     }}
                     style={{ color: "black" }}
                   >

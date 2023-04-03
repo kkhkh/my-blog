@@ -53,15 +53,20 @@ const StyledBody = styled.div`
 `;
 
 // サイドバー
-const StyledSidebarContainer = styled.div`
+const StyledSidebarContainerBottom = styled.div`
   background-color: #f2f2f2;
   grid-column: 2 / 3;
   padding: 20px;
 `;
 
+const StyledSidebarContainerTop = styled.div`
+  background-color: #f2f2f2;
+  grid-column: 2 / 3;
+`;
+
 const StyledSidebarCategoryMenu = styled.div`
   margin-bottom: 50px;
-  div {
+  .menu {
     color: #fff;
     background: #e9727e;
     padding: 10px;
@@ -83,7 +88,7 @@ const StyledSidebarCategoryMenu = styled.div`
   }
 `;
 
-// タグ一覧
+// タグ
 const StyledTags = styled.div`
   display: inline-block;
   margin: 0 0.5em 0.6em 0;
@@ -99,10 +104,9 @@ const StyledThumbnail = styled.img`
   width: 100%;
 `;
 
+// 人気記事ランキング
 const StyledSidebarRanking = styled.div`
-  padding: 5px;
-  border-bottom: 1px dashed #999;
-  div {
+  .menu {
     color: #fff;
     background: #e9727e;
     padding: 10px;
@@ -110,14 +114,61 @@ const StyledSidebarRanking = styled.div`
     text-align: center;
     margin-bottom: 10px;
   }
+
   h4 {
     margin-top: 0px;
     border-bottom: 1px dashed #999;
-    padding-bottom: 10px;
+    padding-bottom: 20px;
+    text-decoration: underline;
   }
   img {
     width: 100%;
     border-radius: 5px;
+  }
+`;
+
+// 新規記事一覧
+const StyledSidebarNew = styled.div`
+  .menu {
+    color: #fff;
+    background: #e9727e;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  .article {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border-bottom: 1px dashed #999;
+    padding: 10px;
+    img {
+      width: 100px;
+      height: 80px;
+      object-fit: cover;
+      margin-right: 10px;
+    }
+  }
+
+  h4 {
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 16px;
+    margin: 0;
+    text-decoration: underline;
+  }
+`;
+
+// タグメニュー
+const StyledSidebarTags = styled.div`
+  .menu {
+    color: #fff;
+    background: #e9727e;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    margin-top: 20px;
   }
 `;
 
@@ -136,13 +187,21 @@ const Post = () => {
   const [category, setCategory] = useState<string>();
   const [tags, setTags] = useState<tags[]>();
   const [categoriesName, setCategoriesName] = useState<string[]>();
+  const [tagsName, setTagsName] = useState<string[]>();
   const location = useLocation();
 
   useEffect(() => {
     console.log(location.state);
-    if (location.state && location.state.categoriesName) {
-      const { categoriesName } = location.state;
-      setCategoriesName(categoriesName);
+    if (location.state) {
+      if (location.state.categoriesName) {
+        const { categoriesName } = location.state;
+        setCategoriesName(categoriesName);
+      }
+      if (location.state.tagsName) {
+        const { tagsName } = location.state;
+        setTagsName(tagsName);
+        console.log(tagsName);
+      }
     }
   }, [location.state]);
 
@@ -245,9 +304,9 @@ const Post = () => {
           </p>
         </StyledBody>
 
-        <StyledSidebarContainer>
+        <StyledSidebarContainerBottom>
           <StyledSidebarCategoryMenu>
-            <div>カテゴリーメニュー</div>
+            <div className="menu">カテゴリーメニュー</div>
             <ul>
               {categoriesName?.map((name) => {
                 return (
@@ -259,7 +318,8 @@ const Post = () => {
             </ul>
           </StyledSidebarCategoryMenu>
           <StyledSidebarRanking>
-            <div>人気記事ランキング</div>
+            <div className="menu">人気記事ランキング</div>
+
             <img
               src={
                 article.thumbnailUrl !== "thumbnailUrl"
@@ -268,6 +328,7 @@ const Post = () => {
               }
             />
             <h4>{article.title}</h4>
+
             <img
               src={
                 article.thumbnailUrl !== "thumbnailUrl"
@@ -276,6 +337,7 @@ const Post = () => {
               }
             />
             <h4>{article.title}</h4>
+
             <img
               src={
                 article.thumbnailUrl !== "thumbnailUrl"
@@ -285,7 +347,53 @@ const Post = () => {
             />
             <h4>{article.title}</h4>
           </StyledSidebarRanking>
-        </StyledSidebarContainer>
+          <StyledSidebarNew>
+            <div className="menu">新規記事一覧</div>
+            <div className="article">
+              <img
+                src={
+                  article.thumbnailUrl !== "thumbnailUrl"
+                    ? `${article.thumbnailUrl}`
+                    : `${no_image}`
+                }
+              />
+              <h4>{article.title}</h4>
+            </div>
+            <div className="article">
+              <img
+                src={
+                  article.thumbnailUrl !== "thumbnailUrl"
+                    ? `${article.thumbnailUrl}`
+                    : `${no_image}`
+                }
+              />
+              <h4>{article.title}</h4>
+            </div>{" "}
+            <div className="article">
+              <img
+                src={
+                  article.thumbnailUrl !== "thumbnailUrl"
+                    ? `${article.thumbnailUrl}`
+                    : `${no_image}`
+                }
+              />
+              <h4>{article.title}</h4>
+            </div>
+          </StyledSidebarNew>
+          <StyledSidebarTags>
+            <div className="menu">タグメニュー</div>
+            <div style={{ padding: "10px" }}>
+              {tagsName?.map((name) => {
+                return (
+                  <StyledTags>
+                    <i className="fas fa-tag"></i>
+                    {name}
+                  </StyledTags>
+                );
+              })}
+            </div>
+          </StyledSidebarTags>
+        </StyledSidebarContainerBottom>
       </StyledGridContainer>
     </StyledContainer>
   );
