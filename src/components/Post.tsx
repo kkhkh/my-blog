@@ -5,6 +5,7 @@ import useQueryFirebaseUser from "../hooks/useQueryFirebaseUser";
 import Markdown from "markdown-to-jsx";
 import styled from "styled-components";
 import no_image from "../assets/no-image.png";
+import { useLocation } from "react-router-dom";
 
 type article = {
   id: number;
@@ -13,6 +14,13 @@ type article = {
   content: string;
   createdAt: string;
   thumbnailUrl: string;
+  updatedAt: string;
+};
+
+type tags = {
+  createdAt: string;
+  id: number;
+  name: string;
   updatedAt: string;
 };
 
@@ -36,16 +44,81 @@ const StyledGridContainer = styled.div`
 
 // ボディ
 const StyledBody = styled.div`
-  background-color: #fff;
+  background-color: #f2f7ea;
   grid-column: 1 / 2;
   padding: 20px;
+  img {
+    width: 100%;
+  }
 `;
 
 // サイドバー
-const StyledSidebar = styled.div`
+const StyledSidebarContainer = styled.div`
   background-color: #f2f2f2;
   grid-column: 2 / 3;
   padding: 20px;
+`;
+
+const StyledSidebarCategoryMenu = styled.div`
+  margin-bottom: 50px;
+  div {
+    color: #fff;
+    background: #e9727e;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+  }
+  ul {
+    list-style: none;
+    padding-left: 0;
+  }
+  li {
+    color: #fff;
+    padding: 5px;
+    border-bottom: 1px dashed #999;
+    a {
+      color: #000;
+      font-weight: bold;
+    }
+  }
+`;
+
+// タグ一覧
+const StyledTags = styled.div`
+  display: inline-block;
+  margin: 0 0.5em 0.6em 0;
+  padding: 0.6em;
+  line-height: 1;
+  text-decoration: none;
+  border: 1px solid #000000;
+  border-radius: 0.3em;
+`;
+
+// 投稿画像
+const StyledThumbnail = styled.img`
+  width: 100%;
+`;
+
+const StyledSidebarRanking = styled.div`
+  padding: 5px;
+  border-bottom: 1px dashed #999;
+  div {
+    color: #fff;
+    background: #e9727e;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  h4 {
+    margin-top: 0px;
+    border-bottom: 1px dashed #999;
+    padding-bottom: 10px;
+  }
+  img {
+    width: 100%;
+    border-radius: 5px;
+  }
 `;
 
 const Post = () => {
@@ -60,7 +133,18 @@ const Post = () => {
     thumbnailUrl: "string",
     updatedAt: "string",
   });
-  const [category, seCategory] = useState<string>();
+  const [category, setCategory] = useState<string>();
+  const [tags, setTags] = useState<tags[]>();
+  const [categoriesName, setCategoriesName] = useState<string[]>();
+  const location = useLocation();
+
+  useEffect(() => {
+    console.log(location.state);
+    if (location.state && location.state.categoriesName) {
+      const { categoriesName } = location.state;
+      setCategoriesName(categoriesName);
+    }
+  }, [location.state]);
 
   useEffect(() => {
     getArticleAllInfo();
@@ -70,20 +154,21 @@ const Post = () => {
   const getArticleAllInfo = async () => {
     console.log(await fireBaseUser?.getIdToken());
     const articleInfo: any = await getArticle();
+    const tagsInfo: any = await getTags();
     const categoryInfo: any = await getCategory(
       articleInfo.data.article.categoryId
     );
 
-    console.log(articleInfo);
+    console.log(tagsInfo.data.tags);
     setArticle(articleInfo.data.article);
-    seCategory(categoryInfo.data.category.name);
+    setTags(tagsInfo.data.tags);
+    setCategory(categoryInfo.data.category.name);
 
     return articleInfo;
   };
 
   // カテゴリ以外の記事情報取得
   const getArticle = async () => {
-    console.log("fireBaseUser");
     console.log(await fireBaseUser?.getIdToken());
     const response = axios.get<string[]>(
       "https://api-blog-dev.lightsail.ijcloud.jp/articles/" + postId,
@@ -111,11 +196,27 @@ const Post = () => {
     );
     return response;
   };
+
+  // 記事にアタッチされたタグ一覧取得
+  const getTags = async () => {
+    // try {
+    const response = axios.get<string>(
+      "https://api-blog-dev.lightsail.ijcloud.jp/articles/" + postId + "/tags",
+      {
+        headers: {
+          Authorization: "Bearer " + (await fireBaseUser?.getIdToken()),
+          accept: "application/json",
+        },
+      }
+    );
+    return response;
+  };
+
   return (
     <StyledContainer>
       <StyledGridContainer>
         <StyledBody>
-          <h2>{article.title}</h2>
+          <h1>{article.title}</h1>
           <h3>
             {new Date(article.createdAt).toLocaleDateString("ja-JP", {
               year: "numeric",
@@ -123,12 +224,14 @@ const Post = () => {
               day: "numeric",
             })}
           </h3>
-          <p>ID: {postId}</p>
-          <p>カテゴリー：{category}</p>
-
-          <p>
-            本文： <Markdown children={article?.content ?? ""} />
-          </p>
+          {tags?.map((tag) => {
+            return (
+              <StyledTags>
+                <i className="fas fa-tag"></i>
+                {tag.name}
+              </StyledTags>
+            );
+          })}
           <img
             src={
               article.thumbnailUrl !== "thumbnailUrl"
@@ -136,11 +239,53 @@ const Post = () => {
                 : `${no_image}`
             }
           ></img>
+
+          <p>
+            本文： <Markdown children={article?.content ?? ""} />
+          </p>
         </StyledBody>
 
-        <StyledSidebar>
-          {/* ここにサイドバーのコンテンツを追加 */}
-        </StyledSidebar>
+        <StyledSidebarContainer>
+          <StyledSidebarCategoryMenu>
+            <div>カテゴリーメニュー</div>
+            <ul>
+              {categoriesName?.map((name) => {
+                return (
+                  <li key={name}>
+                    <NavLink to={"/category/" + name}>{name}</NavLink>
+                  </li>
+                );
+              })}
+            </ul>
+          </StyledSidebarCategoryMenu>
+          <StyledSidebarRanking>
+            <div>人気記事ランキング</div>
+            <img
+              src={
+                article.thumbnailUrl !== "thumbnailUrl"
+                  ? `${article.thumbnailUrl}`
+                  : `${no_image}`
+              }
+            />
+            <h4>{article.title}</h4>
+            <img
+              src={
+                article.thumbnailUrl !== "thumbnailUrl"
+                  ? `${article.thumbnailUrl}`
+                  : `${no_image}`
+              }
+            />
+            <h4>{article.title}</h4>
+            <img
+              src={
+                article.thumbnailUrl !== "thumbnailUrl"
+                  ? `${article.thumbnailUrl}`
+                  : `${no_image}`
+              }
+            />
+            <h4>{article.title}</h4>
+          </StyledSidebarRanking>
+        </StyledSidebarContainer>
       </StyledGridContainer>
     </StyledContainer>
   );

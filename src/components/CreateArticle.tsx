@@ -16,15 +16,13 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import SettingsAccessibilityIcon from "@mui/icons-material/SettingsAccessibility";
 import SearchIcon from "@mui/icons-material/Search";
-import Chip from "@mui/material/Chip";
 import { makeStyles } from "@material-ui/core/styles";
 import Stack from "@mui/material/Stack";
 import useQueryFirebaseUser from "../hooks/useQueryFirebaseUser";
 
 const API_URL = "https://api.openai.com/v1/";
 const MODEL = "gpt-3.5-turbo";
-// const API_KEY = "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";
-const API_KEY = "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";
+const API_KEY = import.meta.env.VITE_APP_OPENAI_API_KEY;
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: "inherit",

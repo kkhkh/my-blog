@@ -104,11 +104,6 @@ const StyledThumbnail = styled.img`
 const Posts = () => {
   const [articles, setArticles] = useState<article[]>([]);
   const { fireBaseUser } = useQueryFirebaseUser();
-
-  useEffect(() => {
-    getAllinfo();
-  }, []);
-
   const [tags, setTags] = useState([
     {
       createdAt: "2014-10-10T04:50:40.000Z",
@@ -126,11 +121,14 @@ const Posts = () => {
     },
   ]);
 
+  useEffect(() => {
+    getAllinfo();
+  }, []);
+
   const getTags = async () => {
     const getTagsResponse = await axios.get(
       "https://api-blog-dev.lightsail.ijcloud.jp/tags"
     );
-    console.log({ getTagsResponse });
     setTags(getTagsResponse.data.tags);
   };
 
@@ -144,7 +142,6 @@ const Posts = () => {
         },
       }
     );
-    console.log({ getCategoriesResponse });
     setCategories(getCategoriesResponse.data.categories);
   };
 
@@ -237,7 +234,15 @@ const Posts = () => {
             {articles.map((article) => {
               return (
                 <StyledItem key={article.id}>
-                  <Link to={"/posts/" + article.id} style={{ color: "black" }}>
+                  <Link
+                    to={"/posts/" + article.id}
+                    state={{
+                      categoriesName: categories.map(
+                        (category) => category.name
+                      ),
+                    }}
+                    style={{ color: "black" }}
+                  >
                     <StyledThumbnail
                       src={
                         article.thumbnailUrl !== "thumbnailUrl"
