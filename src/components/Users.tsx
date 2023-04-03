@@ -183,7 +183,13 @@ const Users = () => {
                 <td>{user.name}</td>
                 <td>{user.email}</td>
                 <td>{user.role}</td>
-                <td>{user.createdAt}</td>
+                <td>
+                  {new Date(user.createdAt).toLocaleDateString("ja-JP", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </td>
               </tr>
             );
           })}
