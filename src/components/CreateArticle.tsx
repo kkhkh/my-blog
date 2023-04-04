@@ -249,40 +249,6 @@ const CreateArticle = () => {
   // フォームの表示
   return (
     <ThemeProvider theme={theme}>
-      <CssBaseline />
-      {/* <AppBar position="relative"> */}
-
-      <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="static">
-          <Toolbar>
-            <SettingsAccessibilityIcon sx={{ mr: 2 }} />
-            <Typography variant="h6" color="inherit" noWrap></Typography>
-            <Search>
-              <SearchIconWrapper>
-                <SearchIcon />
-              </SearchIconWrapper>
-              <StyledInputBase
-                placeholder="Search…"
-                inputProps={{ "aria-label": "search" }}
-              />
-            </Search>
-          </Toolbar>
-        </AppBar>
-      </Box>
-      <ButtonGroup variant="text" aria-label="text button group">
-        <Button>
-          <NavLink to="/">ホーム</NavLink>
-        </Button>
-        <Button>
-          <NavLink to="/users">ユーザー一覧</NavLink>
-        </Button>
-        <Button>
-          <NavLink to="/posts">記事一覧</NavLink>
-        </Button>
-        <Button>
-          <NavLink to={"/createarticle/"}>投稿</NavLink>
-        </Button>
-      </ButtonGroup>
       <main>
         <Grid container>
           <Grid sm={2} />

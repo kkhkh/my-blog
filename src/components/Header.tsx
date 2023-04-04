@@ -219,52 +219,54 @@ function stringAvatar(name: string) {
 const Header = () => {
   const { fireBaseUser } = useQueryFirebaseUser();
   return (
-    <StyledHeader>
-      <StyledHeaderLeft>
-        <StyledHeaderLeftObject>
-          <StyledHeaderImg src={my_blog_cat_buti} />
-        </StyledHeaderLeftObject>
-        <StyledHeaderLeftNavigation>
-          <StyledNavigation>
-            <NavLink to="/">ホーム</NavLink>
-            <NavLink to="/users">ユーザー一覧</NavLink>
-            <NavLink to="/posts">投稿一覧</NavLink>
-            <NavLink to="createarticle">投稿</NavLink>
-          </StyledNavigation>
-        </StyledHeaderLeftNavigation>
-      </StyledHeaderLeft>
+    <>
+      <StyledHeader>
+        <StyledHeaderLeft>
+          <StyledHeaderLeftObject>
+            <StyledHeaderImg src={my_blog_cat_buti} />
+          </StyledHeaderLeftObject>
+          <StyledHeaderLeftNavigation>
+            <StyledNavigation>
+              <NavLink to="/">ホーム</NavLink>
+              <NavLink to="/users">ユーザー一覧</NavLink>
+              <NavLink to="/posts">投稿一覧</NavLink>
+              <NavLink to="createarticle">投稿する</NavLink>
+            </StyledNavigation>
+          </StyledHeaderLeftNavigation>
+        </StyledHeaderLeft>
 
-      <StyledHeaderRight>
-        <StyledHeaderRightObject>
-          <StyledSerchForm>
-            <SearchIcon />
-            <input placeholder="キーワードを入力" />
-          </StyledSerchForm>
-          <StyledSerchFormMedia>
-            <SearchIcon />
-          </StyledSerchFormMedia>
-        </StyledHeaderRightObject>
-        <StyledHeaderRightObject>
-          {!fireBaseUser || !fireBaseUser.displayName ? (
-            // <Bavatar
-            //   size={40}
-            //   name="Mary Baker"
-            //   variant="beam"
-            //   colors={["#FDF1CC", "#C6D6B8", "#987F69", "#E3AD40", "#FCD036"]}
-            // />
-            <Avatar />
-          ) : (
-            <Avatar {...stringAvatar(fireBaseUser.displayName || "")} />
-            // <Avatar
-            //   size={40}
-            //   name="Willa Cather"
-            //   variant="beam"
-            //   colors={["#FDF1CC", "#C6D6B8", "#987F69", "#E3AD40", "#FCD036"]}
-            // />
-          )}
-        </StyledHeaderRightObject>
-      </StyledHeaderRight>
-    </StyledHeader>
+        <StyledHeaderRight>
+          <StyledHeaderRightObject>
+            <StyledSerchForm>
+              <SearchIcon />
+              <input placeholder="キーワードを入力" />
+            </StyledSerchForm>
+            <StyledSerchFormMedia>
+              <SearchIcon />
+            </StyledSerchFormMedia>
+          </StyledHeaderRightObject>
+          <StyledHeaderRightObject>
+            {!fireBaseUser || !fireBaseUser.displayName ? (
+              // <Bavatar
+              //   size={40}
+              //   name="Mary Baker"
+              //   variant="beam"
+              //   colors={["#FDF1CC", "#C6D6B8", "#987F69", "#E3AD40", "#FCD036"]}
+              // />
+              <Avatar />
+            ) : (
+              <Avatar {...stringAvatar(fireBaseUser.displayName || "")} />
+              // <Avatar
+              //   size={40}
+              //   name="Willa Cather"
+              //   variant="beam"
+              //   colors={["#FDF1CC", "#C6D6B8", "#987F69", "#E3AD40", "#FCD036"]}
+              // />
+            )}
+          </StyledHeaderRightObject>
+        </StyledHeaderRight>
+      </StyledHeader>
+    </>
   );
 };
 

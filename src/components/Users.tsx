@@ -134,7 +134,6 @@ const Users = () => {
   const theme = createTheme();
   return (
     <ThemeProvider theme={theme}>
-      <CssBaseline />
       <StyledContainer>
         <Box
           sx={{

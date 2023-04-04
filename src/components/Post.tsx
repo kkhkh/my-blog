@@ -3,9 +3,11 @@ import { useParams, NavLink } from "react-router-dom";
 import axios from "axios";
 import useQueryFirebaseUser from "../hooks/useQueryFirebaseUser";
 import Markdown from "markdown-to-jsx";
+import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 import no_image from "../assets/no-image.png";
-import { useLocation } from "react-router-dom";
+import jwImage from "../assets/jw_side.png";
+import autoImage from "../assets/auto_side.png";
 
 type article = {
   id: number;
@@ -34,7 +36,7 @@ const StyledContainer = styled.div`
 const StyledGridContainer = styled.div`
   display: grid;
   margin-top: 20px;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1.5fr;
   grid-gap: 20px;
 
   @media (max-width: 768px) {
@@ -45,25 +47,92 @@ const StyledGridContainer = styled.div`
 // ボディ
 const StyledBody = styled.div`
   background-color: #f2f7ea;
-  grid-column: 1 / 2;
+  grid-row: 1 / 3;
+  grid-column: 1 / 4;
   padding: 20px;
   img {
     width: 100%;
   }
 `;
 
-// サイドバー
-const StyledSidebarContainerBottom = styled.div`
-  background-color: #f2f2f2;
+const StyledFavoriteLeft = styled.div`
+  background-color: #f2f7ea;
+  grid-row: 3 / 4;
+  grid-column: 1 / 2;
+  img {
+    width: 100%;
+  }
+  .title {
+    font-size: 20ox;
+    font-weight: bold;
+    padding: 10px;
+  }
+  .content {
+    font-size: 15ox;
+    font-weight: bold;
+    padding: 10px;
+  }
+`;
+
+const StyledFavoriteCenter = styled.div`
+  background-color: #f2f7ea;
+  grid-row: 3 / 4;
   grid-column: 2 / 3;
+  img {
+    width: 100%;
+  }
+  .title {
+    font-size: 20ox;
+    font-weight: bold;
+    padding: 10px;
+  }
+  .content {
+    font-size: 15ox;
+    font-weight: bold;
+    padding: 10px;
+  }
+`;
+
+const StyledFavoriteRight = styled.div`
+  background-color: #f2f7ea;
+  grid-row: 3 / 4;
+  grid-column: 3 / 4;
+  img {
+    width: 100%;
+  }
+  .title {
+    font-size: 20ox;
+    font-weight: bold;
+    padding: 10px;
+  }
+  .content {
+    font-size: 15ox;
+    font-weight: bold;
+    padding: 10px;
+  }
+`;
+
+// サイドバー
+const StyledSidebarContainerTop = styled.div`
+  background-color: #f2f2f2;
+  grid-row: 1 / 2;
+  grid-column: 4 / 5;
+`;
+
+const StyledSidebarContainer = styled.div`
+  background-color: #f2f2f2;
+  grid-row: 2 / 3;
+  grid-column: 4 / 5;
   padding: 20px;
 `;
 
-const StyledSidebarContainerTop = styled.div`
+const StyledSidebarContainerBottom = styled.div`
   background-color: #f2f2f2;
-  grid-column: 2 / 3;
+  grid-row: 3 / 4;
+  grid-column: 4 / 5;
 `;
 
+// カテゴリーメニュー
 const StyledSidebarCategoryMenu = styled.div`
   margin-bottom: 50px;
   .menu {
@@ -86,22 +155,6 @@ const StyledSidebarCategoryMenu = styled.div`
       font-weight: bold;
     }
   }
-`;
-
-// タグ
-const StyledTags = styled.div`
-  display: inline-block;
-  margin: 0 0.5em 0.6em 0;
-  padding: 0.6em;
-  line-height: 1;
-  text-decoration: none;
-  border: 1px solid #000000;
-  border-radius: 0.3em;
-`;
-
-// 投稿画像
-const StyledThumbnail = styled.img`
-  width: 100%;
 `;
 
 // 人気記事ランキング
@@ -172,6 +225,19 @@ const StyledSidebarTags = styled.div`
   }
 `;
 
+// タグ
+const StyledTags = styled.div`
+  display: inline-block;
+  margin: 0 0.5em 0.6em 0;
+  padding: 0.6em;
+  line-height: 1;
+  text-decoration: none;
+  border: 1px solid #000000;
+  border-radius: 0.3em;
+`;
+
+// おすすめ記事
+
 const Post = () => {
   const { fireBaseUser } = useQueryFirebaseUser();
   const { postId } = useParams();
@@ -190,6 +256,7 @@ const Post = () => {
   const [tagsName, setTagsName] = useState<string[]>();
   const location = useLocation();
 
+  // カテゴリーメニューとタグメニューの一覧を取得
   useEffect(() => {
     console.log(location.state);
     if (location.state) {
@@ -205,11 +272,11 @@ const Post = () => {
     }
   }, [location.state]);
 
+  // 記事の詳細を取得
   useEffect(() => {
     getArticleAllInfo();
   }, []);
 
-  // 記事情報取得
   const getArticleAllInfo = async () => {
     console.log(await fireBaseUser?.getIdToken());
     const articleInfo: any = await getArticle();
@@ -297,14 +364,49 @@ const Post = () => {
                 ? `${article.thumbnailUrl}`
                 : `${no_image}`
             }
-          ></img>
+          />
 
           <p>
             本文： <Markdown children={article?.content ?? ""} />
           </p>
         </StyledBody>
-
-        <StyledSidebarContainerBottom>
+        <StyledFavoriteLeft>
+          <img
+            src={
+              article.thumbnailUrl !== "thumbnailUrl"
+                ? `${article.thumbnailUrl}`
+                : `${no_image}`
+            }
+          />
+          <div className="title">{article.title}</div>
+          <div className="content">{article.content}</div>
+        </StyledFavoriteLeft>
+        <StyledFavoriteCenter>
+          <img
+            src={
+              article.thumbnailUrl !== "thumbnailUrl"
+                ? `${article.thumbnailUrl}`
+                : `${no_image}`
+            }
+          />
+          <div className="title">{article.title}</div>
+          <div className="content">{article.content}</div>
+        </StyledFavoriteCenter>
+        <StyledFavoriteRight>
+          <img
+            src={
+              article.thumbnailUrl !== "thumbnailUrl"
+                ? `${article.thumbnailUrl}`
+                : `${no_image}`
+            }
+          />
+          <div className="title">{article.title}</div>
+          <div className="content">{article.content}</div>
+        </StyledFavoriteRight>
+        <StyledSidebarContainerTop>
+          <img src={jwImage} />
+        </StyledSidebarContainerTop>
+        <StyledSidebarContainer>
           <StyledSidebarCategoryMenu>
             <div className="menu">カテゴリーメニュー</div>
             <ul>
@@ -393,6 +495,9 @@ const Post = () => {
               })}
             </div>
           </StyledSidebarTags>
+        </StyledSidebarContainer>
+        <StyledSidebarContainerBottom>
+          <img src={autoImage} />
         </StyledSidebarContainerBottom>
       </StyledGridContainer>
     </StyledContainer>

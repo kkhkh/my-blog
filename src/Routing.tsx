@@ -10,12 +10,14 @@ import CreateArticle from "./components/CreateArticle";
 import useQueryFirebaseUser from "./hooks/useQueryFirebaseUser";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import BreadLayout from "./components/BreadLayout";
 
 const Routing = () => {
   const { fireBaseUser } = useQueryFirebaseUser();
   return (
     <BrowserRouter>
       <Header />
+      <BreadLayout />
       <Routes>
         <Route path={"/register/"} element={<Register />} />
         <Route path={"/login/"} element={<Login />} />

@@ -13,6 +13,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import CloseIcon from "@mui/icons-material/Close";
 import { useQueryClient } from "@tanstack/react-query";
 import styled from "styled-components";
+import { useForm } from "react-hook-form";
 
 import {
   signInWithEmailAndPassword,
