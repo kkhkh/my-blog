@@ -11,6 +11,7 @@ import useQueryFirebaseUser from "./hooks/useQueryFirebaseUser";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import BreadLayout from "./components/BreadLayout";
+import ReactHookForm from "./components/ReactHookForm";
 
 const Routing = () => {
   const { fireBaseUser } = useQueryFirebaseUser();
@@ -26,7 +27,7 @@ const Routing = () => {
         <Route path={"/posts"} element={<Posts />} />
         <Route path={"posts/:postId"} element={<Post />} />
         <Route path={"createarticle"} element={<CreateArticle />} />
-        <Route path={"chat"} element={<Chat />} />
+        <Route path={"form"} element={<ReactHookForm />} />
       </Routes>
       <Footer />
     </BrowserRouter>

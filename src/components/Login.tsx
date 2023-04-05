@@ -13,6 +13,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import CloseIcon from "@mui/icons-material/Close";
 import { useQueryClient } from "@tanstack/react-query";
 import styled from "styled-components";
+import { useForm } from "react-hook-form";
 
 import {
   signInWithEmailAndPassword,
@@ -74,22 +75,24 @@ const StyledLoginForm = styled.div`
 const StyledLoginFormItem = styled.div`
   margin-bottom: 0.75em;
   width: 100%;
-`;
+  input {
+    background: #fafafa;
+    border: none;
+    border-bottom: 2px solid #e9e9e9;
+    color: #666;
+    font-family: "Open Sans", sans-serif;
+    font-size: 1em;
+    height: 50px;
+    transition: border-color 0.3s;
+    width: 100%;
 
-const StyledLoginInput = styled.input.attrs({ required: true })`
-  background: #fafafa;
-  border: none;
-  border-bottom: 2px solid #e9e9e9;
-  color: #666;
-  font-family: "Open Sans", sans-serif;
-  font-size: 1em;
-  height: 50px;
-  transition: border-color 0.3s;
-  width: 100%;
-
-  &:focus {
-    border-bottom: 2px solid #c0c0c0;
-    outline: none;
+    &:focus {
+      border-bottom: 2px solid #c0c0c0;
+      outline: none;
+    }
+  }
+  .error {
+    color: red;
   }
 `;
 
@@ -130,11 +133,24 @@ const StyledLoginFooter = styled.div`
   }
 `;
 
+interface IFormInput {
+  email: string;
+  password: string;
+  email_confirmation: string;
+}
+
 const Login = () => {
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [openModal, setOpenModal] = React.useState(false);
   const [resetEmail, setResetEmail] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    getValues,
+    trigger,
+  } = useForm<IFormInput>();
 
   // パスワードリセットメール送信
   const sendResetEmail = async (e: React.MouseEvent<HTMLElement>) => {
@@ -151,16 +167,15 @@ const Login = () => {
   };
   const queryClient = useQueryClient();
   // ログイン
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-    await signInWithEmailAndPassword(auth, loginEmail, loginPassword)
+  const onSubmit = async (data: any) => {
+    console.log(data);
+    await signInWithEmailAndPassword(auth, data.email, data.password)
       .then((userCredential) => {
         queryClient.setQueryData(["fireBaseUser"], userCredential);
         console.log("IdToken");
         console.log(userCredential.user.getIdToken());
       })
       .catch((error) => alert(error.message));
-    console.log(auth);
   };
 
   // signin with google
@@ -186,33 +201,44 @@ const Login = () => {
         <>
           <StyledLoginForm>
             <h1>Sign In</h1>
-            <form>
+            <form onSubmit={handleSubmit(onSubmit)}>
               <StyledLoginFormItem>
                 <label htmlFor="email"></label>
-                <StyledLoginInput
-                  type="email"
-                  name="email"
-                  placeholder="Email Address"
-                  value={loginEmail}
-                  onChange={(e) => setLoginEmail(e.target.value)}
-                ></StyledLoginInput>
+                <input
+                  id="email"
+                  {...register("email", {
+                    required: "必須項目です",
+                    onBlur: () => {
+                      if (getValues("email_confirmation")) {
+                        trigger("email_confirmation");
+                      }
+                    },
+                    pattern: {
+                      value: /^[\w\-._]+@[\w\-._]+\.[A-Za-z]+/,
+                      message: "入力形式がメールアドレスではありません。",
+                    },
+                  })}
+                />
+                {errors.email?.message && (
+                  <div className="error">{errors.email.message}</div>
+                )}
               </StyledLoginFormItem>
               <StyledLoginFormItem>
                 <label htmlFor="password"></label>
-                <StyledLoginInput
-                  type="password"
-                  name="password"
-                  placeholder="Password"
-                  value={loginPassword}
-                  onChange={(e) => setLoginPassword(e.target.value)}
-                ></StyledLoginInput>
+
+                <input
+                  id="password"
+                  {...register("password", { required: "必須項目です" })}
+                />
+                {errors.password?.message && (
+                  <div className="error">{errors.password.message}</div>
+                )}
               </StyledLoginFormItem>
               <StyledLoginButtonPanel>
                 <StyledLoginButtonPanelButton
                   type="submit"
                   title="Sign In"
                   value="Sign In"
-                  onClick={handleSubmit}
                 ></StyledLoginButtonPanelButton>
               </StyledLoginButtonPanel>
             </form>
@@ -230,47 +256,43 @@ const Login = () => {
 
           <Container component="main" maxWidth="xs">
             <CssBaseline />
-            <div className={classes.paper}>
-              <form className={classes.form} noValidate onSubmit={handleSubmit}>
-                <FormControlLabel
-                  control={<Checkbox value="remember" color="primary" />}
-                  label="Remember me"
-                />
+            <FormControlLabel
+              control={<Checkbox value="remember" color="primary" />}
+              label="Remember me"
+            />
 
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  startIcon={<CameraIcon />}
-                  onClick={signInGoogle}
-                >
-                  SignIn with Google
-                </Button>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              startIcon={<CameraIcon />}
+              onClick={signInGoogle}
+            >
+              SignIn with Google
+            </Button>
 
-                <Modal isOpen={openModal} style={customStyles}>
-                  <Typography id="modal-modal-description">
-                    入力したアドレスにパスワードリセットメールを送信します
-                  </Typography>
-                  <TextField
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    type="email"
-                    name="email"
-                    label="Reset Email"
-                    value={resetEmail}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setResetEmail(e.target.value);
-                    }}
-                  />
-                  <IconButton onClick={sendResetEmail}>
-                    <SendIcon />
-                  </IconButton>
-                  <CloseIcon onClick={() => setOpenModal(false)}></CloseIcon>
-                </Modal>
-              </form>
-            </div>
+            <Modal isOpen={openModal} style={customStyles}>
+              <Typography id="modal-modal-description">
+                入力したアドレスにパスワードリセットメールを送信します
+              </Typography>
+              <TextField
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                type="email"
+                name="email"
+                label="Reset Email"
+                value={resetEmail}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setResetEmail(e.target.value);
+                }}
+              />
+              <IconButton onClick={sendResetEmail}>
+                <SendIcon />
+              </IconButton>
+              <CloseIcon onClick={() => setOpenModal(false)}></CloseIcon>
+            </Modal>
           </Container>
         </>
       )}

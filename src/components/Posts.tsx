@@ -29,7 +29,7 @@ const StyledContainer = styled.div`
 `;
 
 // カテゴリ一覧
-const StyledCategories = styled.div`
+const StyledCategories = styled.a`
   display: inline-block;
   margin: 0 0.1em 0.6em 0;
   padding: 0.6em;
@@ -37,6 +37,7 @@ const StyledCategories = styled.div`
   text-decoration: none;
   color: #0080ff;
   text-align: center;
+  cursor: pointer;
 `;
 
 // 中央寄せ
@@ -166,6 +167,12 @@ const Posts = () => {
     await getArticles();
   };
 
+  function CategryFilter(id: number) {
+    const response = articles.filter((article) => {
+      return id === article.categoryId;
+    });
+  }
+
   const theme = createTheme();
   return (
     <ThemeProvider theme={theme}>
@@ -210,7 +217,9 @@ const Posts = () => {
             {categories?.map((category, index) => {
               return (
                 <React.Fragment key={index}>
-                  <StyledCategories>{category.name}</StyledCategories>
+                  <StyledCategories onClick={CategryFilter(category.id)}>
+                    {category.name}
+                  </StyledCategories>
                   {index !== categories.length - 1 && " / "}
                 </React.Fragment>
               );
