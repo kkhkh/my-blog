@@ -12,8 +12,33 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import useQueryFirebaseUser from "../hooks/useQueryFirebaseUser";
 import { makeStyles } from "@material-ui/core";
-import { Link } from "@mui/material";
-import { Link as RouterLink } from "react-router-dom";
+import useMutateArticles from "../hooks/useMutateArticles";
+import useMutateTags from "../hooks/useMutateTags";
+import useMutateCategories from "../hooks/useMutateCategories";
+
+type article = {
+  id: number;
+  title: string;
+  categoryId: number;
+  content: string;
+  createAt: string;
+  thumbnailUrl: string;
+  updatedAt: string;
+};
+
+type tag = {
+  createAt: string;
+  name: string;
+  id: number;
+  updatedAt: string;
+};
+
+type category = {
+  createAt: string;
+  name: string;
+  id: number;
+  updatedAt: string;
+};
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -49,47 +74,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Search = styled("div")(({ theme }) => ({
-  position: "relative",
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  "&:hover": {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
-  marginLeft: 0,
-  width: "100%",
-  [theme.breakpoints.up("sm")]: {
-    marginLeft: theme.spacing(1),
-    width: "auto",
-  },
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: "inherit",
-  "& .MuiInputBase-input": {
-    padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    [theme.breakpoints.up("sm")]: {
-      width: "12ch",
-      "&:focus": {
-        width: "20ch",
-      },
-    },
-  },
-}));
-
-const SearchIconWrapper = styled("div")(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: "100%",
-  position: "absolute",
-  pointerEvents: "none",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-}));
 function stringToColor(string: string) {
   let hash = 0;
   let i;
@@ -128,13 +112,20 @@ const Home = () => {
     await signOut(auth);
     navigate("/login");
   };
-  const classes = useStyles();
   const { fireBaseUser } = useQueryFirebaseUser();
+  const { setArticlesMutation } = useMutateArticles();
+  const { setTagsMutation } = useMutateTags();
+  const { setCategoriesMutation } = useMutateCategories();
+
+  const setArticles = async () => {
+    setArticlesMutation.mutate();
+    setTagsMutation.mutate();
+    const token = await fireBaseUser?.getIdToken();
+    setCategoriesMutation.mutate(token);
+  };
+
   useEffect(() => {
-    (async () => {
-      console.log("token");
-      console.log(await fireBaseUser?.getIdToken());
-    })();
+    setArticles();
   }, []);
 
   return (

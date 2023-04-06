@@ -11,6 +11,7 @@ import axios from "axios";
 import styled from "styled-components";
 import break_cat_buti from "../assets/break-cat-buti.png";
 import no_image from "../assets/no-image.png";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 type article = {
   id: number;
@@ -20,6 +21,24 @@ type article = {
   createAt: string;
   thumbnailUrl: string;
   updatedAt: string;
+};
+
+type tag = {
+  createAt: string;
+  name: string;
+  id: number;
+  updatedAt: string;
+};
+
+type category = {
+  createAt: string;
+  name: string;
+  id: number;
+  updatedAt: string;
+};
+
+type StyledTagProps = {
+  active: boolean;
 };
 
 // ページ全体
@@ -47,14 +66,29 @@ const StyledCenter = styled.div`
 `;
 
 // タグ一覧
-const StyledTags = styled.div`
+const StyledTags = styled.div<StyledTagProps>`
   display: inline-block;
   margin: 0 0.5em 0.6em 0;
   padding: 0.6em;
   line-height: 1;
   text-decoration: none;
   border: 1px solid #000000;
-  border-radius: 0.3em;
+  border-radius: 0.4em;
+  cursor: pointer;
+  color: ${(props) => (props.active ? "#fff" : "#000")};
+  background-color: ${(props) => (props.active ? "#000" : "#fff")};
+  &:hover {
+    transition: 0.3s;
+    border: 1px solid #fff;
+    color: #fff;
+    background-color: #000;
+  }
+`;
+
+const ActiveStyledTag = styled(StyledTags)`
+  color: #fff;
+  background-color: #000;
+  border: 1px solid #fff;
 `;
 
 // 画像
@@ -103,75 +137,44 @@ const StyledThumbnail = styled.img`
 `;
 
 const Posts = () => {
-  const [articles, setArticles] = useState<article[]>([]);
   const { fireBaseUser } = useQueryFirebaseUser();
-  const [tags, setTags] = useState([
-    {
-      createdAt: "2014-10-10T04:50:40.000Z",
-      name: "tag",
-      id: 0,
-      updatedAt: "2014-10-10T04:50:40.000Z",
-    },
-  ]);
-  const [categories, setCategories] = useState([
-    {
-      createdAt: "2014-10-10T04:50:40.000Z",
-      name: "categry",
-      id: 0,
-      updatedAt: "2014-10-10T04:50:40.000Z",
-    },
-  ]);
+  const [articles, setArticles] = useState<article[] | null>();
+  const [tags, setTags] = useState<tag[] | null>();
+  const [categories, setCategories] = useState<category[] | null>();
+  const [activeTag, setActiveTag] = useState<tag | null>(null);
+
+  const queryClient = useQueryClient();
 
   useEffect(() => {
-    getAllinfo();
+    setArticles(queryClient.getQueryData<article[] | null>(["articles"]));
+    setTags(queryClient.getQueryData<tag[] | null>(["tags"]));
+    setCategories(queryClient.getQueryData<category[] | null>(["categories"]));
   }, []);
 
-  const getTags = async () => {
-    const getTagsResponse = await axios.get(
-      "https://api-blog-dev.lightsail.ijcloud.jp/tags"
+  // カテゴリーでフィルター
+  function CategoryFilter(id: number) {
+    const articles = queryClient.getQueryData<article[] | null>(["articles"]);
+    const response = articles?.filter(
+      (article: article) => article.categoryId === id
     );
-    setTags(getTagsResponse.data.tags);
-  };
-
-  const getCategories = async () => {
-    const getCategoriesResponse = await axios.get(
-      "https://api-blog-dev.lightsail.ijcloud.jp/categories",
-      {
-        headers: {
-          Authorization: "Bearer " + (await fireBaseUser?.getIdToken()),
-          accept: "application/json",
-        },
-      }
-    );
-    setCategories(getCategoriesResponse.data.categories);
-  };
-
-  const getArticles = async () => {
-    const getArticlesResponse = await axios.get(
-      "https://api-blog-dev.lightsail.ijcloud.jp/articles",
-      {
-        headers: {
-          Authorization: "Bearer " + (await fireBaseUser?.getIdToken()),
-          accept: "application/json",
-        },
-      }
-    );
-    console.log({ getArticlesResponse });
-    setArticles(getArticlesResponse.data.articles);
-  };
-
-  const getAllinfo = async () => {
-    console.log(await fireBaseUser?.getIdToken());
-    await getTags();
-    await getCategories();
-    await getArticles();
-  };
-
-  function CategryFilter(id: number) {
-    const response = articles.filter((article) => {
-      return id === article.categoryId;
-    });
+    setArticles(response);
   }
+
+  // タグでフィルター
+  function TagFilter(id: number) {
+    const articles = queryClient.getQueryData<article[] | null>(["articles"]);
+    const tags = queryClient.getQueryData<tag[] | null>(["tags"]);
+    // const response = tags
+    //   ?.filter((tag) => tag.id === id)
+    //   .flatMap((tag) => tag.articlIds);
+    // console.log(response);
+    // setArticles(response);
+  }
+
+  const handleTagClick = (tag: tag) => {
+    setActiveTag(tag === activeTag ? null : tag);
+    TagFilter(tag.id);
+  };
 
   const theme = createTheme();
   return (
@@ -214,10 +217,11 @@ const Posts = () => {
 
           {/* カテゴリ一覧 */}
           <StyledCenter>
-            {categories?.map((category, index) => {
+            {categories?.map((category: category, index) => {
               return (
                 <React.Fragment key={index}>
-                  <StyledCategories onClick={CategryFilter(category.id)}>
+                  {/* <StyledCategories> */}
+                  <StyledCategories onClick={() => CategoryFilter(category.id)}>
                     {category.name}
                   </StyledCategories>
                   {index !== categories.length - 1 && " / "}
@@ -228,9 +232,13 @@ const Posts = () => {
 
           {/* タグ一覧 */}
           <StyledCenter>
-            {tags?.map((tag) => {
+            {tags?.map((tag: tag) => {
               return (
-                <StyledTags>
+                <StyledTags
+                  key={tag.id}
+                  active={tag === activeTag}
+                  onClick={() => handleTagClick(tag)}
+                >
                   <i className="fas fa-tag"></i>
                   {tag.name}
                 </StyledTags>
@@ -240,19 +248,10 @@ const Posts = () => {
 
           {/*投稿一覧 */}
           <StyledGridContainer>
-            {articles.map((article) => {
+            {articles?.map((article: article) => {
               return (
                 <StyledItem key={article.id}>
-                  <Link
-                    to={"/posts/" + article.id}
-                    state={{
-                      categoriesName: categories.map(
-                        (category) => category.name
-                      ),
-                      tagsName: tags.map((tag) => tag.name),
-                    }}
-                    style={{ color: "black" }}
-                  >
+                  <Link to={"/posts/" + article.id} style={{ color: "black" }}>
                     <StyledThumbnail
                       src={
                         article.thumbnailUrl !== "thumbnailUrl"

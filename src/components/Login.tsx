@@ -26,6 +26,35 @@ import { auth, provider } from "../FirebaseConfig";
 import { Navigate, NavLink } from "react-router-dom";
 import Modal from "react-modal";
 
+type article = {
+  id: number;
+  title: string;
+  categoryId: number;
+  content: string;
+  createAt: string;
+  thumbnailUrl: string;
+  updatedAt: string;
+};
+
+type tag = {
+  createAt: string;
+  name: string;
+  id: number;
+  updatedAt: string;
+};
+
+type category = {
+  createAt: string;
+  name: string;
+  id: number;
+  updatedAt: string;
+};
+
+// const [articles, setArticles] = useState<article[] | null>();
+// const [tags, setTags] = useState<tag[] | null>();
+// const [categories, setCategories] = useState<category[] | null>();
+// const [activeTag, setActiveTag] = useState<tag | null>(null);
+
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),
@@ -172,6 +201,13 @@ const Login = () => {
     await signInWithEmailAndPassword(auth, data.email, data.password)
       .then((userCredential) => {
         queryClient.setQueryData(["fireBaseUser"], userCredential);
+
+        setArticles(queryClient.getQueryData<article[] | null>(["articles"]));
+        setTags(queryClient.getQueryData<tag[] | null>(["tags"]));
+        setCategories(
+          queryClient.getQueryData<category[] | null>(["categories"])
+        );
+
         console.log("IdToken");
         console.log(userCredential.user.getIdToken());
       })
